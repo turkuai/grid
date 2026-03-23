@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { languages, List } from "./List.js";
 import "./Filter.css";
 
 function Filter() {
   const [query, setQuery] = useState("");
 
-  const filteredItems = languages
-    .filter(lang => lang.toLowerCase().includes(query.toLowerCase()))
-    .sort((a, b) => {
-      const q = query.toLowerCase();
-      const aStarts = a.toLowerCase().startsWith(q);
-      const bStarts = b.toLowerCase().startsWith(q);
+  const filteredItems = useMemo(() => {
+    const q = query.toLowerCase();
+    return languages
+      .filter(lang => lang.toLowerCase().includes(q))
+      .sort((a, b) => {
+        const aStarts = a.toLowerCase().startsWith(q);
+        const bStarts = b.toLowerCase().startsWith(q);
 
-      if (aStarts && !bStarts) return -1;
-      if (!aStarts && bStarts) return 1;
-      return a.localeCompare(b);
-    });
+        if (aStarts && !bStarts) return -1;
+        if (!aStarts && bStarts) return 1;
+        return a.localeCompare(b);
+      });
+  }, [query]);
 
   return (
     <div className="filter-container">
