@@ -1,0 +1,9 @@
+.filter-container {
+  width: 250px;
+  margin: 20px;
+}
+.filter-container input {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 5px;
+}
