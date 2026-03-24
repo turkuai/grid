@@ -1,18 +1,23 @@
-import React, { useState, useMemo } from "react";
-import { languages, List } from "./List.js";
+import { useState, useMemo } from "react";
+import { List } from "./List";
 import "./Filter.css";
 
-function Filter() {
+interface FilterProps {
+  data: string[];
+  selected: string;
+  onSelected: (selection: string) => void;
+}
+
+export default function Filter({ data, selected, onSelected }: FilterProps) {
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState("Identify Language");
 
   const filteredItems = useMemo(() => {
     const q = query.toLowerCase();
 
-    return languages
+    return data
       .filter(lang => lang.toLowerCase().includes(q))
       .sort((a, b) => {
-        // default vaihtoehto ensimmäisenä
+        //default vaihtoehto ensin
         if (a === "Identify Language") return -1;
         if (b === "Identify Language") return 1;
 
@@ -24,7 +29,7 @@ function Filter() {
 
         return a.localeCompare(b);
       });
-  }, [query]);
+  }, [query, data]);
 
   return (
     <div className="filter-container">
@@ -43,10 +48,8 @@ function Filter() {
         items={filteredItems}
         query={query}
         selected={selected}
-        onSelect={setSelected}
+        onSelect={onSelected}
       />
     </div>
   );
 }
-
-export default Filter;
