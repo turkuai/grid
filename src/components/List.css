@@ -1,10 +1,30 @@
 .list {
-  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   padding: 0;
-  width: 200px;
+  margin: 0;
 }
 
-.list li {
-  padding: 8px;
-  border-bottom: 1px solid #ccc;
+.list-item {
+  padding: 6px 10px;
+  border: none;
+  text-align: left;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.list-item:hover {
+  background: #f0f0f0;
+}
+
+.list-item.active {
+  background: #007bff;
+  color: white;
+}
+
+.list-item strong {
+  font-weight: bold;
 }

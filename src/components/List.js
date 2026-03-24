@@ -2,6 +2,7 @@ import React from "react";
 import "./List.css";
 
 export const languages = [
+  "Identify Language", // default vaihtoehto.
   "English",
   "Finnish",
   "Swedish",
@@ -15,7 +16,7 @@ export const languages = [
   "Kazakh"
 ];
 
-export function List({ items, query }) {
+export function List({ items, query, selected, onSelect }) {
   const highlightMatch = (text, query) => {
     if (!query) return text;
     const index = text.toLowerCase().indexOf(query.toLowerCase());
@@ -25,7 +26,7 @@ export function List({ items, query }) {
     const match = text.slice(index, index + query.length);
     const after = text.slice(index + query.length);
 
-    return (
+    return ( // highlight/strong haussa olevat kirjaimet
       <>
         {before}
         <strong>{match}</strong>
@@ -35,10 +36,16 @@ export function List({ items, query }) {
   };
 
   return (
-    <ul className="list">
+    <div className="list">
       {items.map((item, index) => (
-        <li key={index}>{highlightMatch(item, query)}</li>
+        <button
+          key={index}
+          className={`list-item ${selected === item ? "active" : ""}`}
+          onClick={() => onSelect(item)}
+        >
+          {highlightMatch(item, query)}
+        </button>
       ))}
-    </ul>
+    </div>
   );
 }

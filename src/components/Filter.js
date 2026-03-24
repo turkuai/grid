@@ -4,17 +4,24 @@ import "./Filter.css";
 
 function Filter() {
   const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState("Identify Language");
 
   const filteredItems = useMemo(() => {
     const q = query.toLowerCase();
+
     return languages
       .filter(lang => lang.toLowerCase().includes(q))
       .sort((a, b) => {
+        // default vaihtoehto ensimmäisenä
+        if (a === "Identify Language") return -1;
+        if (b === "Identify Language") return 1;
+
         const aStarts = a.toLowerCase().startsWith(q);
         const bStarts = b.toLowerCase().startsWith(q);
 
         if (aStarts && !bStarts) return -1;
         if (!aStarts && bStarts) return 1;
+
         return a.localeCompare(b);
       });
   }, [query]);
@@ -23,11 +30,21 @@ function Filter() {
     <div className="filter-container">
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search language..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      <List items={filteredItems} query={query} />
+
+      <p className="selected-label">
+        Selected: <strong>{selected}</strong>
+      </p>
+
+      <List
+        items={filteredItems}
+        query={query}
+        selected={selected}
+        onSelect={setSelected}
+      />
     </div>
   );
 }
