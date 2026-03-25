@@ -1,21 +1,6 @@
 import React from "react";
 import "./List.css";
 
-export const languages = [
-  "Identify Language", // default vaihtoehto.
-  "English",
-  "Finnish",
-  "Swedish",
-  "German",
-  "Korean",
-  "Japanese",
-  "Chinese",
-  "Arabic",
-  "French",
-  "Kurdish",
-  "Kazakh"
-];
-
 export function List({ items, query, selected, onSelect }) {
   const highlightMatch = (text, query) => {
     if (!query) return text;
