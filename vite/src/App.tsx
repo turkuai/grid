@@ -29,38 +29,48 @@ export default function App() {
   return (
     <div className="container">
       <div className="card">
-        <h1>Valtuutta Muunnin</h1>
+        <h1>Currency Converter</h1>
 
-        <div className="row">
-          <label>From</label>
-          <select
-            value={from}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setFrom(e.target.value)
-            }
-          >
-            {Object.keys(rates).map((cur) => (
-              <option key={cur} value={cur}>
-                {cur}
-              </option>
-            ))}
-          </select>
+        <div className="row-horizontal">
+          <div className="field">
+            <label>From:</label>
+            <select
+              value={from}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setFrom(e.target.value)
+              }
+            >
+              {Object.keys(rates).map((cur) => (
+                <option key={cur} value={cur}>
+                  {cur}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <label>To</label>
-          <select
-            value={to}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setTo(e.target.value)
-            }
-          >
-            {Object.keys(rates).map((cur) => (
-              <option key={cur} value={cur}>
-                {cur}
-              </option>
-            ))}
-          </select>
+          <button className="swap" onClick={swapCurrencies}>
+            ⇄
+          </button>
 
-          <label>Amount</label>
+          <div className="field">
+            <label>To:</label>
+            <select
+              value={to}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                setTo(e.target.value)
+              }
+            >
+              {Object.keys(rates).map((cur) => (
+                <option key={cur} value={cur}>
+                  {cur}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="amount">
+          <label>Amount:</label>
           <input
             type="number"
             value={amount}
@@ -68,13 +78,9 @@ export default function App() {
               setAmount(Number(e.target.value))
             }
           />
-
-          <button onClick={swapCurrencies}>Vaihda</button>
         </div>
 
-        <h2 style={{ marginTop: "20px" }}>
-          {convert().toFixed(2)} {to}
-        </h2>
+        <h2>{convert().toFixed(2)} {to}</h2>
       </div>
     </div>
   );

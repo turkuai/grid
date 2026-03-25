@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background-color: #f0f0f0;
+  background-color: #e5e5e5;
   font-family: sans-serif;
 }
 
@@ -12,28 +12,59 @@ body {
 }
 
 .card {
-  background: white;
+  background: #f7f7f7;
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  border-radius: 16px;
+  width: 500px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-.row {
-  margin-top: 10px;
+h1 {
+  margin-bottom: 20px;
+}
+
+.row-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
-select,
-input {
-  padding: 8px;
+select {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #e0e0e0;
   font-size: 16px;
 }
 
-button {
-  margin-top: 10px;
-  padding: 6px 10px;
+.swap {
+  background: #dcdcdc;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
   cursor: pointer;
+  font-size: 18px;
+}
+
+.amount {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #e0e0e0;
+  font-size: 16px;
+  width: 100%;
 }
