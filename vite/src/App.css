@@ -1,0 +1,38 @@
+nav {
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: #ffee02;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #a39800;
+}
+
+.main-header {
+    position: sticky;
+    top: 0;
+    background-color: #504d44;
+    padding: 20px;
+    transition: all ease 0.3s;
+}
+
+.scroll-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1b1f24;
+  padding: 20px;
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
