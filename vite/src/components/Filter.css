@@ -1,0 +1,13 @@
+.filter-container {
+  width: 260px;
+  margin: 20px;
+  font-family: sans-serif;
+}
+.filter-container input {
+  width: 100%;
+  padding: 6px;
+  margin-bottom: 8px;
+}
+.selected-label {
+  margin-bottom: 8px;
+}
