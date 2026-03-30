@@ -10,6 +10,16 @@ type FilterProps = {
 
 function Filter({ data, selected, onSelected }: FilterProps) {
   const [query, setQuery] = useState<string>("")
+  const [recentData, setRecentData] = useState<string[]>([])
+
+  const handleSelect = (value: string) => {
+    onSelected(value)
+
+    setRecentData((prev) => {
+      const filtered = prev.filter((item) => item !== value)
+      return [value, ...filtered].slice(0, 5)
+    })
+  }
 
   const filteredItems = useMemo(() => {
     const q = query.toLowerCase()
@@ -47,9 +57,10 @@ function Filter({ data, selected, onSelected }: FilterProps) {
 
       <List
         items={filteredItems}
+        recentData={recentData}
         query={query}
         selected={selected}
-        onSelect={onSelected}
+        onSelect={handleSelect}
       />
     </div>
   )
