@@ -17,14 +17,14 @@ function Filter({ data, selected, onSelected }: FilterProps) {
     return data
       .filter((lang) => lang.toLowerCase().includes(q))
       .sort((a, b) => {
-        if (a === "Identify Language") return -1
-        if (b === "Identify Language") return 1
+        if (a === "Identify Language") { return -1 }
+        if (b === "Identify Language") { return 1 }
 
         const aStarts = a.toLowerCase().startsWith(q)
         const bStarts = b.toLowerCase().startsWith(q)
 
-        if (aStarts && !bStarts) return -1
-        if (!aStarts && bStarts) return 1
+        if (aStarts && !bStarts) { return -1 }
+        if (!aStarts && bStarts) { return 1 }
 
         return a.localeCompare(b)
       })

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { BrowserRouter, Routes, Route, Link  } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 import CurrencyConverter from "./CurrencyConverter"
 import ListPage from "./ListPage"
 import Calculator from "./Calculator"
@@ -11,6 +11,7 @@ const MainHeader = () => (
       <Link to="/">Converter</Link>
       <Link to="/list">List Demo</Link>
       <Link to="/calculator">Calculator</Link>
+      <Link to="/moodpicker">Mood picker</Link>
     </nav>
   </header>
 )
@@ -21,6 +22,7 @@ const ScrollHeader = () => (
       <Link to="/">Converter</Link>
       <Link to="/list">List Demo</Link>
       <Link to="/calculator">Calculator</Link>
+      <Link to="/moodpicker">Mood picker</Link>
     </nav>
   </header>
 )
@@ -31,18 +33,23 @@ const App = () => {
   useEffect(() => {
     let lastScrollY = window.scrollY
 
-      const handleScroll = () => {
-    const currentScrollY = window.scrollY
-    const diff = currentScrollY - lastScrollY
+    // scrolli thresholdit, on main-header ja "scroll-header", jos scrollaa alas, main header häviää, ja scroll header ilmestyy.
+    const SHOW_THRESHOLD = 150
+    const HIDE_THRESHOLD = 130
+    const SCROLL_DELTA = 20
 
-    if (currentScrollY > 150 && diff > 20) {
-      setShowScrollHeader(true)
-    } else if (currentScrollY < 120) {
-      setShowScrollHeader(false)
-  }
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const diff = currentScrollY - lastScrollY
 
-  lastScrollY = currentScrollY
-}
+      if (currentScrollY > SHOW_THRESHOLD && diff > SCROLL_DELTA) {
+        setShowScrollHeader(true)
+      } else if (currentScrollY < HIDE_THRESHOLD) {
+        setShowScrollHeader(false)
+      }
+
+      lastScrollY = currentScrollY
+    }
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
@@ -50,13 +57,13 @@ const App = () => {
 
   return (
     <BrowserRouter>
-        {!showScrollHeader && <MainHeader />}
-        {showScrollHeader && <ScrollHeader />}
+      {!showScrollHeader && <MainHeader />}
+      {showScrollHeader && <ScrollHeader />}
       <Routes>
         <Route path="/" element={<CurrencyConverter />} />
         <Route path="/list" element={<ListPage />} />
         <Route path="/calculator" element={<Calculator />} />
-      </Routes> 
+      </Routes>
       <div style={{ height: "1500px" }}></div>
     </BrowserRouter>
   )
