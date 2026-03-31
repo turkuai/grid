@@ -6,7 +6,7 @@ const MoodPicker: React.FC = () => {
 
   return (
     <div className="MoodPicker">
-      <label htmlFor="Mood-select" className="label">
+      <label htmlFor="mood-select" className="label">
         Choose mood:
       </label>
 
@@ -17,12 +17,12 @@ const MoodPicker: React.FC = () => {
         onChange={(e) => setSelectedMood(e.target.value)}
       >
         <option value="">Select Mood</option>
-        <option value="">Happy</option>
-        <option value="">Upset</option>
-        <option value="">Sad</option>
-        <option value="">Flustered</option>
-        <option value="">Calm</option>
-        <option value="">Excited</option>
+        <option value="happy">Happy</option>
+        <option value="upset">Upset</option>
+        <option value="sad">Sad</option>
+        <option value="flustered">Flustered</option>
+        <option value="calm">Calm</option>
+        <option value="excited">Excited</option>
       </select>
 
       {selectedMood && (
