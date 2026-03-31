@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom"
 import CurrencyConverter from "./CurrencyConverter"
 import ListPage from "./ListPage"
 import Calculator from "./Calculator"
+import MoodPicker from "./MoodPicker"
 import "./App.css"
 
 const MainHeader = () => (
@@ -63,6 +64,7 @@ const App = () => {
         <Route path="/" element={<CurrencyConverter />} />
         <Route path="/list" element={<ListPage />} />
         <Route path="/calculator" element={<Calculator />} />
+        <Route path="/moodpicker" element={<MoodPicker />} />
       </Routes>
       <div style={{ height: "1500px" }}></div>
     </BrowserRouter>
