@@ -1,44 +1,52 @@
-import { useState, useMemo } from "react"
-import { List } from "./List"
-import "./Filter.css"
+import { useState, useMemo } from "react";
+import { List } from "./List";
+import "./Filter.css";
 
 type FilterProps = {
-  data: string[]
-  selected: string
-  onSelected: (value: string) => void
-}
+  data: string[];
+  selected: string;
+  onSelected: (value: string) => void;
+};
 
 function Filter({ data, selected, onSelected }: FilterProps) {
-  const [query, setQuery] = useState<string>("")
-  const [recentData, setRecentData] = useState<string[]>([])
+  const [query, setQuery] = useState<string>("");
+  const [recentData, setRecentData] = useState<string[]>([]);
 
   const handleSelect = (value: string) => {
-    onSelected(value)
+    onSelected(value);
 
     setRecentData((prev) => {
-      const filtered = prev.filter((item) => item !== value)
-      return [value, ...filtered].slice(0, 5)
-    })
-  }
+      const filtered = prev.filter((item) => item !== value);
+      return [value, ...filtered].slice(0, 5);
+    });
+  };
 
   const filteredItems = useMemo(() => {
-    const q = query.toLowerCase()
+    const q = query.toLowerCase();
 
     return data
       .filter((lang) => lang.toLowerCase().includes(q))
       .sort((a, b) => {
-        if (a === "Identify Language") { return -1 }
-        if (b === "Identify Language") { return 1 }
+        if (a === "Identify Language") {
+          return -1;
+        }
+        if (b === "Identify Language") {
+          return 1;
+        }
 
-        const aStarts = a.toLowerCase().startsWith(q)
-        const bStarts = b.toLowerCase().startsWith(q)
+        const aStarts = a.toLowerCase().startsWith(q);
+        const bStarts = b.toLowerCase().startsWith(q);
 
-        if (aStarts && !bStarts) { return -1 }
-        if (!aStarts && bStarts) { return 1 }
+        if (aStarts && !bStarts) {
+          return -1;
+        }
+        if (!aStarts && bStarts) {
+          return 1;
+        }
 
-        return a.localeCompare(b)
-      })
-  }, [query, data])
+        return a.localeCompare(b);
+      });
+  }, [query, data]);
 
   return (
     <div className="filter-container">
@@ -63,7 +71,7 @@ function Filter({ data, selected, onSelected }: FilterProps) {
         onSelect={handleSelect}
       />
     </div>
-  )
+  );
 }
 
-export default Filter
+export default Filter;

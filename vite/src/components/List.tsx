@@ -1,28 +1,33 @@
-import "./List.css"
+import "./List.css";
 
 type ListProps = {
-  items: string[]
-  recentData: string[]
-  query: string
-  selected: string
-  onSelect: (value: string) => void
-}
+  items: string[];
+  recentData: string[];
+  query: string;
+  selected: string;
+  onSelect: (value: string) => void;
+};
 
-export function List({ items, recentData, query, selected, onSelect }: ListProps) {
-  const highlightMatch = (
-    text: string,
-    query: string
-  ): React.ReactNode => {
+export function List({
+  items,
+  recentData,
+  query,
+  selected,
+  onSelect,
+}: ListProps) {
+  const highlightMatch = (text: string, query: string): React.ReactNode => {
     if (!query) {
-      return text
+      return text;
     }
 
-    const index = text.toLowerCase().indexOf(query.toLowerCase())
-    if (index === -1) { return text }
+    const index = text.toLowerCase().indexOf(query.toLowerCase());
+    if (index === -1) {
+      return text;
+    }
 
-    const before = text.slice(0, index)
-    const match = text.slice(index, index + query.length)
-    const after = text.slice(index + query.length)
+    const before = text.slice(0, index);
+    const match = text.slice(index, index + query.length);
+    const after = text.slice(index + query.length);
 
     return (
       <>
@@ -30,18 +35,18 @@ export function List({ items, recentData, query, selected, onSelect }: ListProps
         <strong>{match}</strong>
         {after}
       </>
-    )
-  }
+    );
+  };
 
-  const q = query.toLowerCase()
+  const q = query.toLowerCase();
 
   const filteredRecent = recentData.filter((item) =>
-    item.toLowerCase().includes(q)
-  )
+    item.toLowerCase().includes(q),
+  );
 
   const normalItems = items
     .filter((item) => !recentData.includes(item))
-    .filter((item) => item.toLowerCase().includes(q))
+    .filter((item) => item.toLowerCase().includes(q));
 
   return (
     <div className="list">
@@ -69,5 +74,5 @@ export function List({ items, recentData, query, selected, onSelect }: ListProps
         </button>
       ))}
     </div>
-  )
+  );
 }
