@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { getCsrfToken } from './csrf.js';
 
 type RowData = Record<string, unknown>;
 export function useServerGet(path: string, currentPage: number, query: string,
@@ -125,6 +126,7 @@ export function useServerPost(
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken(),
         },
         body: JSON.stringify(payload),
       });
@@ -176,6 +178,7 @@ export function useServerDelete(
         credentials: 'include', // Include httpOnly cookies
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken(),
         },
       });
 

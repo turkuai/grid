@@ -4,6 +4,7 @@ import Grid from './Grid.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import { useServerGet, useServerDelete, useServerPost } from './api/api.js';
+import { getCsrfToken } from './api/csrf.js';
 import DataSetView from './DataSetView.js';
 import './styles/Admin.css';
 
@@ -130,6 +131,13 @@ export default function ServerGrid({
 
       const payload: PayloadProp = { ...formData };
 
+      // Remove technical/metadata fields
+      delete payload.id;
+      delete payload.created_at;
+      delete payload.updated_at;
+      delete payload.confirmPassword; // Form helper field, not a DB field
+      delete payload.username; // Not a standard user field
+
       // Special-case combined "name" field (e.g. Users grid)
       if (typeof payload.name === 'string' && payload.name.trim()) {
         const parts = payload.name.trim().split(/\s+/);
@@ -137,15 +145,13 @@ export default function ServerGrid({
         payload.last_name = parts.slice(1).join(' ') || '';
       }
       delete payload.name;
-      delete payload.id;
-      delete payload.created_at;
-      delete payload.updated_at;
 
       const res = await fetch(getApiBase() + updateUrl, {
-        method: 'PATCH',
+        method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken(),
         },
         body: JSON.stringify(payload),
       });

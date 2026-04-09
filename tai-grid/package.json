@@ -2,15 +2,15 @@
   "name": "tai-grid",
   "version": "1.0.0",
   "description": "a typescript library that creates either a table or a infinate scrolling system",
-  "main": "./dist/index.js",
+  "main": "./index.ts",
   "type": "module",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "module": "./index.ts",
+  "types": "./index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
+      "types": "./index.ts",
+      "import": "./index.ts",
+      "default": "./index.ts"
     },
     "./style.css": "./dist/index.css"
   },
