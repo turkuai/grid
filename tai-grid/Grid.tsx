@@ -46,6 +46,8 @@ type GridProps = {
   height?: string,
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
+  onRowClick?: (row: RowData) => void;
+  onAddUsers?: (row: RowData) => void;
 };
 
 export default function Grid({
@@ -58,7 +60,9 @@ export default function Grid({
   height = '500px',
   onEditRow,
   onDeleteRow,
-}: GridProps) {
+  onRowClick,
+  onAddUsers,
+}: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
 
   useEffect(() => {
@@ -87,7 +91,7 @@ export default function Grid({
         },
       };
     });
-    if (!allowEditing && !allowDelete) return dataCols;
+    if (!allowEditing && !allowDelete && !onAddUsers) return dataCols;
     return [
       ...dataCols,
       {
@@ -105,6 +109,13 @@ export default function Grid({
                   </svg>
                 </button>
               )}
+              {onAddUsers && (
+                <button type="button" onClick={() => onAddUsers?.(r)} className="icon-btn" aria-label="Add Users" title="Add Users">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="#0891b2" />
+                  </svg>
+                </button>
+              )}
               {allowDelete && (
                 <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -117,7 +128,7 @@ export default function Grid({
         },
       },
     ];
-  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow]);
+  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, onAddUsers]);
 
   const table = useReactTable({
     data: rows,
@@ -149,7 +160,11 @@ export default function Grid({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr
+              key={row.id}
+              onClick={() => onRowClick?.(row.original)}
+              style={{ cursor: onRowClick ? 'pointer' : 'default' }}
+            >
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
               ))}

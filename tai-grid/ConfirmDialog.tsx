@@ -20,7 +20,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
   isDestructive = true,
-}: ConfirmDialogProp) {
+}: ConfirmDialogProp): React.JSX.Element | null {
   if (!isOpen) return null;
 
   return (

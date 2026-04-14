@@ -18,12 +18,14 @@ type ServerGridProps = {
   showAddButton: boolean;
   formComponent?: React.ComponentType<FormComponentProps>,
   transformAddPayload?: (payload: Record<string, unknown>, context: { path: string }) => Record<string, unknown>,
+  transformEditPayload?: (payload: Record<string, unknown>, context?: { path: string }) => Record<string, unknown>,
   query?: string,
   viewMode?: 'grid' | 'list',
   renderItem?: React.ComponentType<{ data: RowData }>,
   loadPage?: (page: number) => Promise<RowData[]>,
   getApiBase: () => string,
-  showNot: (message: string, type: 'success' | 'error') => void
+  showNot: (message: string, type: 'success' | 'error') => void,
+  onAddUsers?: (row: RowData) => void,
 }
 
 type FormComponentProps = {
@@ -54,14 +56,16 @@ export default function ServerGrid({
   showAddButton = true,// Show add button by default (except history tab which doesn't use ServerGrid)
   formComponent: FormComponent,
   transformAddPayload,
+  transformEditPayload,
   query,
   viewMode,
   renderItem,
   loadPage,
   getApiBase,
   showNot,
+  onAddUsers,
   ...rest               // anything else you want to pass to Grid
-}: ServerGridProps) {
+}: ServerGridProps): React.JSX.Element {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +133,7 @@ export default function ServerGrid({
 
       // Clone formData and drop non-updatable fields; backend will decide what to use
 
-      const payload: PayloadProp = { ...formData };
+      const payload: Record<string, unknown> = { ...formData };
 
       // Remove technical/metadata fields
       delete payload.id;
@@ -146,14 +150,20 @@ export default function ServerGrid({
       }
       delete payload.name;
 
+      // Apply transformEditPayload if provided
+      const finalPayload =
+        typeof transformEditPayload === 'function'
+          ? transformEditPayload(payload, { path })
+          : payload;
+
       const res = await fetch(getApiBase() + updateUrl, {
-        method: 'PUT',
+        method: 'PATCH',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': getCsrfToken(),
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(finalPayload),
       });
 
       if (!res.ok) {
@@ -240,6 +250,7 @@ export default function ServerGrid({
           pageSize={pageSize}
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
+          {...(onAddUsers ? { onAddUsers } : {})}
           {...rest}
         />}
 

@@ -10,7 +10,7 @@ export default function ServerGridEditDialog({
   isEditing = false,
   onCancel,
   onSave,
-}: ServerGridEditDialogProp) {
+}: ServerGridEditDialogProp): React.JSX.Element {
   const title = isEditing ? "Edit" : "Add";
 
   const handleSave = () => onSave();
