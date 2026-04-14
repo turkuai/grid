@@ -135,26 +135,25 @@ export default function ServerGrid({
 
       const payload: Record<string, unknown> = { ...formData };
 
-      // Remove technical/metadata fields
+      // Remove technical/metadata fields (but NOT confirmPassword yet - transformEditPayload needs it for validation)
       delete payload.id;
       delete payload.created_at;
       delete payload.updated_at;
-      delete payload.confirmPassword; // Form helper field, not a DB field
       delete payload.username; // Not a standard user field
 
-      // Special-case combined "name" field (e.g. Users grid)
-      if (typeof payload.name === 'string' && payload.name.trim()) {
-        const parts = payload.name.trim().split(/\s+/);
-        payload.first_name = parts[0] ?? '';
-        payload.last_name = parts.slice(1).join(' ') || '';
+      // Remove "name" field if first_name/last_name exist (user entities use those fields directly)
+      if ('first_name' in payload || 'last_name' in payload) {
+        delete payload.name;
       }
-      delete payload.name;
 
-      // Apply transformEditPayload if provided
-      const finalPayload =
+      // Apply transformEditPayload if provided (before removing confirmPassword so it can validate)
+      let finalPayload =
         typeof transformEditPayload === 'function'
           ? transformEditPayload(payload, { path })
           : payload;
+
+      // Now remove confirmPassword after transformation is complete
+      delete finalPayload.confirmPassword;
 
       const res = await fetch(getApiBase() + updateUrl, {
         method: 'PATCH',

@@ -17,6 +17,15 @@
   gap: 1rem;
 }
 
+@media (min-width: 1024px) {
+  .admin-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    justify-items: start;
+  }
+}
+
 .admin-header h1 {
   font-size: 1.25rem;
   font-weight: bold;
@@ -24,6 +33,13 @@
   color: #1f2937;
   flex: 1 1 100%;
   min-width: 200px;
+}
+
+@media (min-width: 1024px) {
+  .admin-header h1 {
+    flex: none;
+    grid-column: 1;
+  }
 }
 
 .admin-logo {
@@ -44,6 +60,39 @@
   color: #4b5563;
 }
 
+.header-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+@media (min-width: 1024px) {
+  .header-nav-buttons {
+    grid-column: 2;
+  }
+}
+
+.nav-button {
+  background-color: transparent;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 1.125rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+}
+
+.nav-button:hover {
+  color: #1f2937;
+}
+
+.nav-button.active {
+  color: #1f2937;
+}
+
 .admin-header-actions {
   display: flex;
   align-items: center;
@@ -51,6 +100,14 @@
   flex-wrap: wrap;
   flex: 1 1 auto;
   justify-content: flex-end;
+}
+
+@media (min-width: 1024px) {
+  .admin-header-actions {
+    grid-column: 3;
+    flex: none;
+    gap: 1rem;
+  }
 }
 
 /* User Info */
