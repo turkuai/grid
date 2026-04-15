@@ -1,6 +1,6 @@
-import React from "react";
+import type { ReactNode } from "react";
 type ServerGridEditDialogProp = {
-  formComponent: React.ReactNode;
+  formComponent: ReactNode;
   isEditing?: boolean;
   onCancel: () => void;
   onSave: () => void;

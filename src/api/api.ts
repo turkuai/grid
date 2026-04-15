@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { getCsrfToken } from './csrf.js';
 
 type RowData = Record<string, unknown>;
