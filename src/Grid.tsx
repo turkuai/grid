@@ -103,21 +103,21 @@ export default function Grid({
           return (
             <div className="grid-actions">
               {allowEditing && (
-                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit">
+                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit" title='Edit'>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M3 21l3.75-1 11.1-11.1a1.5 1.5 0 000-2.12L14.23 2.16a1.5 1.5 0 00-2.12 0L1 13.27V17h3.73L3 21z" fill="#111827" />
                   </svg>
                 </button>
               )}
               {onAddUsers && (
-                <button type="button" onClick={() => onAddUsers?.(r)} className="icon-btn" aria-label="Add Users" title="Add Users">
+                <button type="button" onClick={() => onAddUsers?.(r)} className="icon-btn" aria-label="Add" title="Add">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="#0891b2" />
                   </svg>
                 </button>
               )}
               {allowDelete && (
-                <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete">
+                <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete" title='Delete'>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M9 3h6l1 2h5v2H3V5h5l1-2zm1 7h2v9h-2v-9zm4 0h2v9h-2v-9zM7 10h2v9H7v-9z" fill="#DC2626" />
                   </svg>
