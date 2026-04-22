@@ -1,4 +1,5 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import type { RowAction } from './Grid.js';
 import { Plus } from 'lucide-react';
 import Grid from './Grid.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
@@ -25,22 +26,12 @@ type ServerGridProps = {
   loadPage?: (page: number) => Promise<RowData[]>,
   getApiBase: () => string,
   showNot: (message: string, type: 'success' | 'error') => void,
-  onAddUsers?: (row: RowData) => void,
+  rowActions?: RowAction[];
 }
 
 type FormComponentProps = {
   data: FormDataState;
   setData: Dispatch<SetStateAction<FormDataState>>;
-}
-
-type PayloadProp = {
-  name?: string,
-  first_name?: string,
-  last_name?: string,
-  id?: number | string,
-  created_at?: string,
-  updated_at?: string
-
 }
 
 type FormDataState = Record<string, unknown>;
@@ -53,7 +44,7 @@ export default function ServerGrid({
   allowEditing = false,
   allowDelete = false,
   pageSize = 20,
-  showAddButton = true,// Show add button by default (except history tab which doesn't use ServerGrid)
+  showAddButton = true,// Show add button by default
   formComponent: FormComponent,
   transformAddPayload,
   transformEditPayload,
@@ -63,7 +54,7 @@ export default function ServerGrid({
   loadPage,
   getApiBase,
   showNot,
-  onAddUsers,
+  rowActions,
   ...rest               // anything else you want to pass to Grid
 }: ServerGridProps): React.JSX.Element {
   const [data, setData] = useState<RowData[]>([]);
@@ -131,29 +122,19 @@ export default function ServerGrid({
         updateUrl = `/api/${cleanPath}`;
       }
 
-      // Clone formData and drop non-updatable fields; backend will decide what to use
-
+      // Clone formData and drop non-updatable technical fields
       const payload: Record<string, unknown> = { ...formData };
 
-      // Remove technical/metadata fields (but NOT confirmPassword yet - transformEditPayload needs it for validation)
+      // Remove technical/metadata fields
       delete payload.id;
       delete payload.created_at;
       delete payload.updated_at;
-      delete payload.username; // Not a standard user field
 
-      // Remove "name" field if first_name/last_name exist (user entities use those fields directly)
-      if ('first_name' in payload || 'last_name' in payload) {
-        delete payload.name;
-      }
-
-      // Apply transformEditPayload if provided (before removing confirmPassword so it can validate)
-      let finalPayload =
+      // Apply transformEditPayload if provided
+      const finalPayload =
         typeof transformEditPayload === 'function'
           ? transformEditPayload(payload, { path })
           : payload;
-
-      // Now remove confirmPassword after transformation is complete
-      delete finalPayload.confirmPassword;
 
       const res = await fetch(getApiBase() + updateUrl, {
         method: 'PATCH',
@@ -249,7 +230,7 @@ export default function ServerGrid({
           pageSize={pageSize}
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
-          {...(onAddUsers ? { onAddUsers } : {})}
+          {...(rowActions ? { rowActions } : {})}
           {...rest}
         />}
 

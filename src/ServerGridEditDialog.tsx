@@ -17,28 +17,28 @@ export default function ServerGridEditDialog({
   const handleCancel = () => onCancel();
 
   return (
-    <div className="product-modal-overlay" onClick={handleCancel}>
+    <div className="sg-modal-overlay" onClick={handleCancel}>
       <div
-        className="product-modal"
+        className="sg-modal"
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: '520px' }}
       >
         <button
           onClick={handleCancel}
-          className="product-modal-close"
+          className="sg-modal-close"
           aria-label="Close"
         >
           ×
         </button>
 
-        <h2 className="product-modal-title">{title}</h2>
+        <h2 className="sg-modal-title">{title}</h2>
 
         {formComponent}
 
         <div style={{ marginTop: '16px', display: 'flex', gap: '12px' }}>
           <button
             type="button"
-            className="product-modal-close-btn"
+            className="sg-modal-cancel-btn"
             style={{ backgroundColor: '#111827' }}
             onClick={handleCancel}
           >
@@ -46,7 +46,7 @@ export default function ServerGridEditDialog({
           </button>
           <button
             type="button"
-            className="product-modal-print-btn"
+            className="sg-modal-save-btn"
             style={{ backgroundColor: '#22c55e' }}
             onClick={handleSave}
           >
