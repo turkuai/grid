@@ -108,15 +108,9 @@ export default function Grid({
         cell: ({ row }) => {
           const r = row.original;
           return (
+            
             <div className="grid-actions">
-              {allowEditing && (
-                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit" title='Edit'>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 21l3.75-1 11.1-11.1a1.5 1.5 0 000-2.12L14.23 2.16a1.5 1.5 0 00-2.12 0L1 13.27V17h3.73L3 21z" fill="#111827" />
-                  </svg>
-                </button>
-              )}
-              {rowActions?.map((action, i) => (
+            {rowActions?.map((action, i) => (
                 <button
                   key={i}
                   type="button"
@@ -128,6 +122,15 @@ export default function Grid({
                   {action.icon}
                 </button>
               ))}
+
+              {allowEditing && (
+                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit" title='Edit'>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 21l3.75-1 11.1-11.1a1.5 1.5 0 000-2.12L14.23 2.16a1.5 1.5 0 00-2.12 0L1 13.27V17h3.73L3 21z" fill="#111827" />
+                  </svg>
+                </button>
+              )}
+              
               {allowDelete && (
                 <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete" title='Delete'>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -135,6 +138,8 @@ export default function Grid({
                   </svg>
                 </button>
               )}
+
+              
             </div>
           );
         },

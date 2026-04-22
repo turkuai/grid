@@ -35,59 +35,28 @@ import 'tai-grid/style.css';
 
 ### Grid
 
-A pure client-side table. Receives data as a prop and handles sorting and pagination locally.
+Client-side table with sorting and pagination.
 
 ```tsx
 import { Grid, type RowAction } from 'tai-grid';
 
 const actions: RowAction[] = [
-  {
-    icon: <MyIcon />,
-    tooltip: 'Do something',
-    onClick: (row) => console.log(row),
-  },
+  { icon: <Icon />, tooltip: 'Action', onClick: (row) => doSomething(row) },
 ];
 
 <Grid
   columns={['name', 'email']}
   data={rows}
   allowEditing
-  allowDelete
-  onEditRow={(row) => handleEdit(row)}
-  onDeleteRow={(row) => handleDelete(row)}
-  onRowClick={(row) => handleClick(row)}
+  onEditRow={handleEdit}
+  onDeleteRow={handleDelete}
   rowActions={actions}
 />
 ```
 
-**Props**
+**Key props:** `columns`, `data`, `allowEditing`, `allowDelete`, `onEditRow`, `onDeleteRow`, `rowActions`, `columnRenderers`, `onRowClick`, `pageSize`, `height`
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
-| `columns` | `Array<string \| ColumnConfig>` | required | Column keys or config objects |
-| `data` | `RowData[]` | `[]` | Rows to display |
-| `allowEditing` | `boolean` | `false` | Show edit button per row |
-| `allowDelete` | `boolean` | `false` | Show delete button per row |
-| `pageSize` | `number` | `20` | Rows per page |
-| `height` | `string` | `'500px'` | CSS height of the table container |
-| `onEditRow` | `(row) => void` | required | Called when edit is clicked |
-| `onDeleteRow` | `(row) => void` | required | Called when delete is clicked |
-| `onRowClick` | `(row) => void` | — | Called when a row is clicked |
-| `rowActions` | `RowAction[]` | — | Extra action buttons rendered per row |
-| `columnRenderers` | `Record<string, ComponentType>` | — | Custom cell renderers per column key |
-
-**ColumnConfig**
-
-```ts
-type ColumnConfig = {
-  field: string;
-  displayName?: string;
-  valueGetter?: (row: RowData) => unknown;
-};
-```
-
-**RowAction**
-
+**RowAction type:**
 ```ts
 type RowAction = {
   icon: React.ReactNode;
@@ -101,66 +70,37 @@ type RowAction = {
 
 ### ServerGrid
 
-Extends `Grid` with server-side pagination, search, add, edit, and delete over a REST API. All HTTP requests include CSRF credentials.
+Grid + server-side pagination, search, add, edit, delete via REST API.
 
 ```tsx
-import { ServerGrid } from 'tai-grid';
-
 <ServerGrid
   columns={['name', 'email']}
   path="users"
   allowEditing
   allowDelete
-  pageSize={20}
-  showAddButton
-  formComponent={MyForm}
-  getApiBase={() => 'https://example.com'}
+  formComponent={UserForm}
+  getApiBase={() => 'https://api.example.com'}
   showNot={(msg, type) => notify(msg, type)}
-  query={searchQuery}
   rowActions={actions}
-  transformAddPayload={(payload) => ({ name: payload.name })}
-  transformEditPayload={(payload) => ({ name: payload.name })}
+  transformAddPayload={(p) => ({ name: p.name })}
+  transformEditPayload={(p) => ({ name: p.name })}
 />
 ```
 
-**Additional Props**
+**Key props:** `path`, `getApiBase`, `showNot`, `formComponent`, `transformAddPayload`, `transformEditPayload`, `query`, `showAddButton`, `viewMode`
 
-| Prop | Type | Description |
-|---|---|---|
-| `path` | `string` | API endpoint, e.g. `users` → `/api/users` |
-| `getApiBase` | `() => string` | Returns the base URL for all requests |
-| `showNot` | `(msg, type) => void` | Notification callback (`'success'` or `'error'`) |
-| `showAddButton` | `boolean` | Show the top-right add button |
-| `formComponent` | `ComponentType` | Form rendered inside add/edit dialogs |
-| `transformAddPayload` | `(payload) => payload` | Transform or validate data before POST |
-| `transformEditPayload` | `(payload, ctx) => payload` | Transform or validate data before PATCH |
-| `query` | `string` | Search string appended as `?search=` |
-| `viewMode` | `'grid' \| 'list'` | Switch between table and infinite-scroll list |
-| `renderItem` | `ComponentType` | Item renderer when `viewMode='list'` |
-| `loadPage` | `(page) => Promise<RowData[]>` | Custom page loader for list mode |
+Library strips `id`, `created_at`, `updated_at` automatically. Use `transformEditPayload` / `transformAddPayload` for app-specific validation and cleanup.
 
-The library automatically strips `id`, `created_at`, and `updated_at` from edit payloads before calling `transformEditPayload`. Any additional field filtering (passwords, computed fields, etc.) is the responsibility of the consuming app via `transformEditPayload`.
-
-**API conventions**
-
-- Endpoints are resolved as `/api/{path}`.
-- GET accepts `?page=N&search=query`.
-- POST to `/api/{path}`, PATCH to `/api/{path}/{id}`, DELETE to `/api/{path}/{id}`.
-- Responses can be a plain array or an object with any array-valued key. `totalPages` is read from the response root if present.
+**API:** GET `/api/{path}?page=N&search=query`, POST/PATCH/DELETE `/api/{path}(/{id})`. Responses can be array or object with any array-valued key.
 
 ---
 
 ### DataSetView
 
-Infinite-scroll list backed by a custom page loader.
+Infinite scroll backed by custom loader.
 
 ```tsx
-import { DataSetView } from 'tai-grid';
-
-<DataSetView
-  loadPage={(page) => fetchPage(page)}
-  render={({ data }) => <MyCard data={data} />}
-/>
+<DataSetView loadPage={(page) => fetchPage(page)} render={Row} />
 ```
 
 ---
@@ -171,13 +111,13 @@ import { DataSetView } from 'tai-grid';
 npm run build
 ```
 
-Output goes to `dist/`. The consuming app should reference the `dist/` build, not `src/` directly.
+Output to `dist/`. Reference `dist/` in consuming apps, not `src/`.
 
 ---
 
-## Design principles
+## Design
 
-- The library knows nothing about the consuming application. No domain-specific field names, error messages, or business rules live here.
-- Extra per-row buttons are injected via `rowActions`. The consuming app owns the icon, tooltip, and handler.
-- Payload transformation and validation belong in the app via `transformAddPayload` / `transformEditPayload`.
-- Error messages from failed requests are passed through directly from the server response.
+- Library is domain-agnostic. No app-specific field names, messages, or rules.
+- Custom row buttons via `rowActions`. App owns icon, tooltip, handler.
+- Validation and field cleanup via `transformAddPayload`/`transformEditPayload`.
+- Server errors passed through as-is.
