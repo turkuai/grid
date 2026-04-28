@@ -233,6 +233,16 @@
     background: #f9fafb;
 }
 
+.data-grid-table th:last-child,
+.data-grid-table td:last-child {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.data-grid-table td:last-child {
+    width: 1%;
+}
+
 /* Mobile AG Grid Styles */
 @media (max-width: 767px) {
     .ag-theme-alpine {

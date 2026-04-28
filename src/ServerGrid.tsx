@@ -27,10 +27,23 @@ type ServerGridLabels = {
     nextLabel?: string;
     pageLabel?: string;
     ofLabel?: string;
+    actionsHeader?: string;
+    edit?: string;
+    delete?: string;
+    previous?: string;
+    next?: string;
+    page?: string;
+    of?: string;
+};
+
+type ColumnConfig = {
+    field: string;
+    displayName?: string;
+    valueGetter?: (row: RowData) => unknown;
 };
 
 type ServerGridProps = {
-    columns: string[];
+    columns: Array<string | ColumnConfig>;
     columnRenderers?: Record<string, React.ComponentType<{ value: unknown; data: RowData }>>;
     path: string;
     allowEditing: boolean;
@@ -280,6 +293,16 @@ export default function ServerGrid({
                     pageSize={pageSize}
                     onEditRow={handleEditRequest}
                     onDeleteRow={handleDeleteRequest}
+                    labels={{
+                        actionsHeader: labels.actionsHeader ?? 'Actions',
+                        edit: labels.edit ?? 'Edit',
+                        add: text.add,
+                        delete: labels.delete ?? 'Delete',
+                        previous: text.previousLabel,
+                        next: text.nextLabel,
+                        page: text.pageLabel,
+                        of: text.ofLabel,
+                    }}
                     {...(onAddUsers ? { onAddUsers } : {})}
                     {...rest}
                 />
