@@ -36,6 +36,13 @@ const getField = (col: string | ColumnConfig) => (typeof col === 'object' ? col.
 const getHeader = (col: string | ColumnConfig) =>
   (typeof col === 'object' && col.displayName) || formatHeader(getField(col));
 
+export type RowAction = {
+  icon: React.ReactNode;
+  tooltip: string;
+  onClick: (row: RowData) => void;
+  className?: string;
+};
+
 type GridProps = {
   columns: Array<string | ColumnConfig> | null;
   columnRenderers?: Record<string, React.ComponentType<ColumnRendererProps>>;
@@ -47,7 +54,7 @@ type GridProps = {
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
-  onAddUsers?: (row: RowData) => void;
+  rowActions?: RowAction[];
 };
 
 export default function Grid({
@@ -61,7 +68,7 @@ export default function Grid({
   onEditRow,
   onDeleteRow,
   onRowClick,
-  onAddUsers,
+  rowActions,
 }: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
 
@@ -91,7 +98,7 @@ export default function Grid({
         },
       };
     });
-    if (!allowEditing && !allowDelete && !onAddUsers) return dataCols;
+    if (!allowEditing && !allowDelete && (!rowActions || rowActions.length === 0)) return dataCols;
     return [
       ...dataCols,
       {
@@ -101,7 +108,21 @@ export default function Grid({
         cell: ({ row }) => {
           const r = row.original;
           return (
+            
             <div className="grid-actions">
+            {rowActions?.map((action, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => action.onClick(r)}
+                  className={`icon-btn${action.className ? ` ${action.className}` : ''}`}
+                  aria-label={action.tooltip}
+                  title={action.tooltip}
+                >
+                  {action.icon}
+                </button>
+              ))}
+
               {allowEditing && (
                 <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit" title='Edit'>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -109,13 +130,7 @@ export default function Grid({
                   </svg>
                 </button>
               )}
-              {onAddUsers && (
-                <button type="button" onClick={() => onAddUsers?.(r)} className="icon-btn" aria-label="Add" title="Add">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="#0891b2" />
-                  </svg>
-                </button>
-              )}
+              
               {allowDelete && (
                 <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete" title='Delete'>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -123,12 +138,14 @@ export default function Grid({
                   </svg>
                 </button>
               )}
+
+              
             </div>
           );
         },
       },
     ];
-  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, onAddUsers]);
+  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, rowActions]);
 
   const table = useReactTable({
     data: rows,
