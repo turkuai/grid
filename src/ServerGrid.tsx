@@ -1,13 +1,13 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
-import type { RowAction } from './Grid.js';
-import { Plus } from 'lucide-react';
-import Grid from './Grid.js';
-import ServerGridEditDialog from './ServerGridEditDialog.js';
-import ConfirmDialog from './ConfirmDialog.js';
-import { useServerGet, useServerDelete, useServerPost } from './api/api.js';
-import { getCsrfToken } from './api/csrf.js';
-import DataSetView from './DataSetView.js';
-import './styles/Admin.css';
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import type { RowAction } from "./Grid.js";
+import { Plus } from "lucide-react";
+import Grid from "./Grid.js";
+import ServerGridEditDialog from "./ServerGridEditDialog.js";
+import ConfirmDialog from "./ConfirmDialog.js";
+import { useServerGet, useServerDelete, useServerPost } from "./api/api.js";
+import { getCsrfToken } from "./api/csrf.js";
+import DataSetView from "./DataSetView.js";
+import "./styles/Admin.css";
 
 type ServerGridProps = {
   columns: string[];
@@ -17,22 +17,22 @@ type ServerGridProps = {
   allowDelete: boolean;
   pageSize: number;
   showAddButton: boolean;
-  formComponent?: React.ComponentType<FormComponentProps>,
-  transformAddPayload?: (payload: Record<string, unknown>, context: { path: string }) => Record<string, unknown>,
-  transformEditPayload?: (payload: Record<string, unknown>, context?: { path: string }) => Record<string, unknown>,
-  query?: string,
-  viewMode?: 'grid' | 'list',
-  renderItem?: React.ComponentType<{ data: RowData }>,
-  loadPage?: (page: number) => Promise<RowData[]>,
-  getApiBase: () => string,
-  showNot: (message: string, type: 'success' | 'error') => void,
+  formComponent?: React.ComponentType<FormComponentProps>;
+  transformAddPayload?: (payload: Record<string, unknown>, context: { path: string }) => Record<string, unknown>;
+  transformEditPayload?: (payload: Record<string, unknown>, context?: { path: string }) => Record<string, unknown>;
+  query?: string;
+  viewMode?: "grid" | "list";
+  renderItem?: React.ComponentType<{ data: RowData }>;
+  loadPage?: (page: number) => Promise<RowData[]>;
+  getApiBase: () => string;
+  showNot: (message: string, type: "success" | "error") => void;
   rowActions?: RowAction[];
-}
+};
 
 type FormComponentProps = {
   data: FormDataState;
   setData: Dispatch<SetStateAction<FormDataState>>;
-}
+};
 
 type FormDataState = Record<string, unknown>;
 type RowData = Record<string, unknown>;
@@ -40,11 +40,11 @@ type RowData = Record<string, unknown>;
 export default function ServerGrid({
   columns,
   columnRenderers,
-  path,                 // API endpoint
+  path, // API endpoint
   allowEditing = false,
   allowDelete = false,
   pageSize = 20,
-  showAddButton = true,// Show add button by default
+  showAddButton = true, // Show add button by default
   formComponent: FormComponent,
   transformAddPayload,
   transformEditPayload,
@@ -55,7 +55,7 @@ export default function ServerGrid({
   getApiBase,
   showNot,
   rowActions,
-  ...rest               // anything else you want to pass to Grid
+  ...rest // anything else you want to pass to Grid
 }: ServerGridProps): React.JSX.Element {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -68,7 +68,7 @@ export default function ServerGrid({
   const [formData, setFormData] = useState<FormDataState>({});
   const [deleteTarget, setDeleteTarget] = useState<RowData | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const isListMode = viewMode === 'list';
+  const isListMode = viewMode === "list";
   // const { showNotification } = showNot();
 
   // If search query changes, jump back to first page
@@ -77,7 +77,7 @@ export default function ServerGrid({
   }, [query]);
 
   // Use hooks for HTTP operations
-  const fetchData = useServerGet(path, currentPage, query ?? '', setData, setTotalPages, setLoading, setError, getApiBase);
+  const fetchData = useServerGet(path, currentPage, query ?? "", setData, setTotalPages, setLoading, setError, getApiBase);
   const performDelete = useServerDelete(path, fetchData, setError, showNot, getApiBase);
   const handleAddRow = useServerPost(path, fetchData, setIsAdding, transformAddPayload, showNot, getApiBase);
 
@@ -94,7 +94,7 @@ export default function ServerGrid({
 
   const handleEditRequest = (row: RowData) => {
     if (!row || !row.id) {
-      console.error('Row has no ID');
+      console.error("Row has no ID");
       return;
     }
     // Set form data to row's data and open edit dialog
@@ -111,14 +111,14 @@ export default function ServerGrid({
 
   const handleSaveEdit = async () => {
     if (!editingRow || !editingRow.id) {
-      console.error('No row to edit');
+      console.error("No row to edit");
       return;
     }
 
     try {
-      let updateUrl = `${path.split('?')[0]}/${editingRow.id}`;
-      if (!updateUrl.startsWith('/api/')) {
-        const cleanPath = updateUrl.startsWith('/') ? updateUrl.slice(1) : updateUrl;
+      let updateUrl = `${path.split("?")[0]}/${editingRow.id}`;
+      if (!updateUrl.startsWith("/api/")) {
+        const cleanPath = updateUrl.startsWith("/") ? updateUrl.slice(1) : updateUrl;
         updateUrl = `/api/${cleanPath}`;
       }
 
@@ -131,23 +131,20 @@ export default function ServerGrid({
       delete payload.updated_at;
 
       // Apply transformEditPayload if provided
-      const finalPayload =
-        typeof transformEditPayload === 'function'
-          ? transformEditPayload(payload, { path })
-          : payload;
+      const finalPayload = typeof transformEditPayload === "function" ? transformEditPayload(payload, { path }) : payload;
 
       const res = await fetch(getApiBase() + updateUrl, {
-        method: 'PATCH',
-        credentials: 'include',
+        method: "PATCH",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': getCsrfToken(),
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": getCsrfToken(),
         },
         body: JSON.stringify(finalPayload),
       });
 
       if (!res.ok) {
-        let msg = 'Failed to update item';
+        let msg = "Failed to update item";
         try {
           const errorData = await res.json();
           msg = errorData.error || errorData.message || msg;
@@ -160,11 +157,11 @@ export default function ServerGrid({
       // Refresh from server so grid matches DB
       await fetchData();
       handleCloseEditModal();
-      showNot('Item updated successfully!', 'success');
+      showNot("Item updated successfully!", "success");
     } catch (err: unknown) {
-      console.error('Edit error:', err);
-      const message = err instanceof Error ? err.message : 'Failed to update item';
-      showNot(message, 'error');
+      console.error("Edit error:", err);
+      const message = err instanceof Error ? err.message : "Failed to update item";
+      showNot(message, "error");
     }
   };
 
@@ -187,41 +184,33 @@ export default function ServerGrid({
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-      {loading && (
-        <div className="grid-loading-overlay">
-          Loading...
-        </div>
-      )}
-      {error && (
-        <div className="grid-error-message">
-          {error}
-        </div>
-      )}
+    <div style={{ position: "relative" }}>
+      {loading && <div className="grid-loading-overlay">Loading...</div>}
+      {error && <div className="grid-error-message">{error}</div>}
 
       {/* Add Button */}
       {showAddButton && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          marginBottom: '1rem'
-        }}>
-          <button
-            onClick={handleAdd}
-            className="server-grid-add-button"
-            type="button"
-          >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "1rem",
+          }}
+        >
+          <button onClick={handleAdd} className="server-grid-add-button" type="button">
             <Plus size={20} />
           </button>
         </div>
       )}
 
-
-      {isListMode
-        ? (renderItem && loadPage
-          ? <DataSetView render={renderItem} loadPage={loadPage} />
-          : <div className="grid-error-message">List view requires both renderItem and loadPage props.</div>)
-        : <Grid
+      {isListMode ? (
+        renderItem && loadPage ? (
+          <DataSetView render={renderItem} loadPage={loadPage} />
+        ) : (
+          <div className="grid-error-message">List view requires both renderItem and loadPage props.</div>
+        )
+      ) : (
+        <Grid
           columns={columns}
           columnRenderers={columnRenderers ?? {}}
           data={data}
@@ -232,15 +221,15 @@ export default function ServerGrid({
           onDeleteRow={handleDeleteRequest}
           {...(rowActions ? { rowActions } : {})}
           {...rest}
-        />}
-
+        />
+      )}
 
       {deleteTarget && (
         <ConfirmDialog
           isOpen={!!deleteTarget}
           title="Confirm deletion"
           message={`Are you sure you want to remove this item?`}
-          confirmLabel={isDeleting ? 'Deleting…' : 'Delete'}
+          confirmLabel={isDeleting ? "Deleting…" : "Delete"}
           cancelLabel="Cancel"
           onCancel={() => {
             if (isDeleting) return;
@@ -265,9 +254,7 @@ export default function ServerGrid({
           isEditing={false}
           onCancel={handleCloseAddModal}
           onSave={() => handleAddRow(formData)}
-          formComponent={
-            <FormComponent data={formData} setData={setFormData} />
-          }
+          formComponent={<FormComponent data={formData} setData={setFormData} />}
         />
       )}
 
@@ -276,27 +263,27 @@ export default function ServerGrid({
           isEditing={true}
           onCancel={handleCloseEditModal}
           onSave={handleSaveEdit}
-          formComponent={
-            <FormComponent data={formData} setData={setFormData} />
-          }
+          formComponent={<FormComponent data={formData} setData={setFormData} />}
         />
       )}
       {/* Pagination Controls */}
       {!isListMode && totalPages > 1 && (
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '10px',
-          marginTop: '20px',
-          alignItems: 'center'
-        }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "10px",
+            marginTop: "20px",
+            alignItems: "center",
+          }}
+        >
           <button
             onClick={handlePreviousPage}
             disabled={currentPage === 1}
             style={{
-              padding: '8px 16px',
-              cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-              opacity: currentPage === 1 ? 0.5 : 1
+              padding: "8px 16px",
+              cursor: currentPage === 1 ? "not-allowed" : "pointer",
+              opacity: currentPage === 1 ? 0.5 : 1,
             }}
           >
             Previous
@@ -308,9 +295,9 @@ export default function ServerGrid({
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
             style={{
-              padding: '8px 16px',
-              cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-              opacity: currentPage === totalPages ? 0.5 : 1
+              padding: "8px 16px",
+              cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+              opacity: currentPage === totalPages ? 0.5 : 1,
             }}
           >
             Next
@@ -320,4 +307,3 @@ export default function ServerGrid({
     </div>
   );
 }
-

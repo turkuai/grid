@@ -1,1 +1,1 @@
-declare module '*.css'; // fixes css import issues
+declare module "*.css"; // fixes css import issues

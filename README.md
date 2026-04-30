@@ -121,3 +121,30 @@ Output to `dist/`. Reference `dist/` in consuming apps, not `src/`.
 - Custom row buttons via `rowActions`. App owns icon, tooltip, handler.
 - Validation and field cleanup via `transformAddPayload`/`transformEditPayload`.
 - Server errors passed through as-is.
+
+---
+
+## Code Style
+
+This project uses [Prettier](https://prettier.io/) for code formatting.
+
+**VS Code setup:**
+
+1. Install the [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extension.
+2. Set it as the default formatter for the workspace:
+   - Open **Settings** → search for `Default Formatter` → select `Prettier - Code formatter` (`esbenp.prettier-vscode`).
+   - Or add to `.vscode/settings.json`:
+     ```json
+     {
+       "editor.defaultFormatter": "esbenp.prettier-vscode",
+       "editor.formatOnSave": true
+     }
+     ```
+
+The `.prettierrc` file at the root of this repo enforces the following rules automatically:
+
+| Rule | Value |
+|---|---|
+| Indentation | 2 spaces |
+| Use tabs | `false` |
+| Print width | 150 characters |

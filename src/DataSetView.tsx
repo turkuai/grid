@@ -7,7 +7,6 @@ type DataSetViewProps = {
 };
 
 export default function DataSetView({ render: Render, loadPage }: DataSetViewProps): React.JSX.Element {
-
   const [page, setPage] = useState<number>(1);
   const [items, setItems] = useState<RowData[]>([]);
   useEffect(() => {
