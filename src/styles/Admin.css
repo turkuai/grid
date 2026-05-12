@@ -221,26 +221,6 @@
 }
 
 /* Buttons */
-.borrow-button {
-  padding: 0.5rem 1rem;
-  background-color: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-
-.borrow-button:hover {
-  background-color: #b91c1c;
-}
-
 .logout-button {
   padding: 0.5rem 1rem;
   background-color: #4b5563;
@@ -322,29 +302,6 @@
   border-top-left-radius: 999px;
   border-top-right-radius: 999px;
   box-shadow: 0 -2px 10px rgba(220, 38, 38, 0.08);
-}
-
-/* Borrow Button */
-@media (min-width: 768px) {
-  .borrow-button {
-    padding: 0.5rem 1rem;
-    background-color: #dc2626;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-  }
-
-  .borrow-button:hover {
-    background-color: #b91c1c;
-  }
 }
 
 /* User Info */
@@ -436,51 +393,6 @@
 
 .user-search input::placeholder {
   color: #9ca3af;
-}
-
-/* Camera/Borrow Content */
-.borrow-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3rem 1.5rem;
-  min-height: 50vh;
-}
-
-.scan-button {
-  padding: 1.25rem 3rem;
-  background-color: #dc2626;
-  color: white;
-  border: 3px solid #dc2626;
-  border-radius: 50px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.scan-button:hover {
-  background-color: #b91c1c;
-  border-color: #b91c1c;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
-}
-
-.scan-button:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
-}
-
-.help-text {
-  margin-top: 1.5rem;
-  color: #dc2626;
-  font-size: 1rem;
-  font-weight: 500;
-  text-align: center;
 }
 
 /* Mobile Tab Content */
@@ -671,164 +583,6 @@
 
 .mobile-action-button:active {
   background-color: #374151;
-}
-
-/* Mobile Product Modal */
-.mobile-product-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--modal-overlay-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-
-.mobile-product-modal {
-  background-color: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 400px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-product-modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 2rem;
-  line-height: 1;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-}
-
-.mobile-product-modal-close:hover {
-  background-color: #f3f4f6;
-  color: #1f2937;
-}
-
-.mobile-product-modal-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 1rem 0;
-  padding-right: 2rem;
-}
-
-.mobile-product-modal-status {
-  font-size: 1rem;
-  font-weight: 500;
-  margin: 0.75rem 0;
-  padding: 0.5rem;
-  background-color: #f3f4f6;
-  border-radius: 4px;
-  text-align: center;
-  color: #1f2937;
-}
-
-.mobile-product-modal-info-section {
-  margin: 1.5rem 0;
-}
-
-.mobile-product-modal-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0.75rem 0 0.5rem 0;
-}
-
-.mobile-product-modal-value {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0.25rem 0;
-  padding-left: 0.5rem;
-}
-
-.mobile-product-modal-input {
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid #d1d5db;
-  padding: 0.75rem 0.25rem;
-  font-size: 0.875rem;
-  outline: none;
-  margin: 0.5rem 0;
-  background: transparent;
-  box-sizing: border-box;
-}
-
-.mobile-product-modal-input:focus {
-  border-bottom-color: #dc2626;
-}
-
-.mobile-product-modal-input::placeholder {
-  color: #9ca3af;
-}
-
-.mobile-product-modal-action-button {
-  width: 100%;
-  background-color: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 0.875rem;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 1.5rem;
-  transition: background-color 0.2s;
-}
-
-.mobile-product-modal-action-button:active {
-  background-color: #b91c1c;
-}
-
-/* Mobile Product Modal Dropdown */
-.mobile-product-modal-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  max-height: 200px;
-  overflow-y: auto;
-  z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 4px;
-}
-
-.mobile-product-modal-dropdown-item {
-  padding: 12px;
-  cursor: pointer;
-  border-bottom: 1px solid #f3f4f6;
-  transition: background-color 0.2s;
-}
-
-.mobile-product-modal-dropdown-item:last-child {
-  border-bottom: none;
-}
-
-.mobile-product-modal-dropdown-item:active {
-  background-color: #f9fafb;
 }
 
 /* Settings Panel */
@@ -1325,7 +1079,6 @@
     margin-bottom: 0.5rem;
   }
 
-  .borrow-button,
   .logout-button {
     display: none;
   }
@@ -1455,21 +1208,6 @@
    RESPONSIVE BREAKPOINTS
    ============================================ */
 
-/* Extra Small Mobile (< 375px) */
-@media (max-width: 374px) {
-  .admin-header h1 {
-    font-size: 1.125rem;
-  }
-
-  .borrow-button span:last-child {
-    display: none;
-  }
-
-  .borrow-button {
-    padding: 0.625rem;
-  }
-}
-
 /* Mobile (< 640px) */
 @media (max-width: 639px) {
   .admin-page {
@@ -1516,11 +1254,6 @@
     margin-left: auto;
   }
 
-  .borrow-button {
-    padding: 0.625rem 1rem;
-    font-size: 0.875rem;
-  }
-
   .admin-header h1 {
     font-size: 1.5rem;
   }
@@ -1534,8 +1267,8 @@
   }
 }
 
-/* Product Modal (used by ServerGridEditDialog) */
-.product-modal-overlay {
+/* Modal (used by ServerGridEditDialog) */
+.sg-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -1550,7 +1283,7 @@
   padding: 1rem;
 }
 
-.product-modal {
+.sg-modal {
   background-color: #ffffff;
   border-radius: 12px;
   padding: 1.5rem;
@@ -1562,7 +1295,7 @@
   box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
 }
 
-.product-modal-close {
+.sg-modal-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -1582,12 +1315,12 @@
   transition: background-color 0.2s;
 }
 
-.product-modal-close:hover {
+.sg-modal-close:hover {
   background-color: #f3f4f6;
   color: #1f2937;
 }
 
-.product-modal-title {
+.sg-modal-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: #1f2937;
@@ -1595,8 +1328,8 @@
   padding-right: 2rem;
 }
 
-.product-modal-close-btn,
-.product-modal-print-btn {
+.sg-modal-cancel-btn,
+.sg-modal-save-btn {
   flex: 1;
   padding: 10px 16px;
   border: none;
@@ -1608,8 +1341,8 @@
   transition: opacity 0.15s ease;
 }
 
-.product-modal-close-btn:hover,
-.product-modal-print-btn:hover {
+.sg-modal-cancel-btn:hover,
+.sg-modal-save-btn:hover {
   opacity: 0.9;
 }
 

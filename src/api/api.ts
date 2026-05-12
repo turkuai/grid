@@ -75,10 +75,11 @@ export function useServerGet(path: string, currentPage: number, query: string,
         );
       }
 
-      // Handle different response structures
+      // Handle different response structures:
+      // Support array response or object with a "data" key, or any other array-valued key as fallback
       const dataKey = Array.isArray(payload)
         ? null
-        : ['data', 'users', 'products', 'history'].find((k) => Array.isArray(payloadObj[k]));
+        : Object.keys(payloadObj).find((k) => Array.isArray(payloadObj[k]));
       const rows = Array.isArray(payload)
         ? payload
         : (dataKey ? (payloadObj[dataKey] as RowData[]) : []);
@@ -195,22 +196,7 @@ export function useServerDelete(
       }
 
       if (!res.ok) {
-        // Check for database constraint errors
         const errorMessage = String(responseData.error || responseData.message || `Delete failed with status ${res.status}`);
-
-        // Check if it's a foreign key constraint error
-        const errorStr = String(errorMessage).toLowerCase();
-        if (errorStr.includes('foreign key constraint') ||
-          errorStr.includes('borrow_history') ||
-          errorStr.includes('cannot delete') ||
-          errorStr.includes('1451')) {
-          showNot(
-            'Cannot delete user because they have borrowing history. Please return all borrowed items first.',
-            'error'
-          );
-          throw new Error('Cannot delete user because they have borrowing history. Please return all borrowed items first.');
-        }
-
         showNot(errorMessage, 'error');
         throw new Error(errorMessage);
       }
