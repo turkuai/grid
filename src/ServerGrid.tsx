@@ -1,11 +1,12 @@
 import { Plus } from 'lucide-react';
-import React, { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import React, { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { useServerDelete, useServerGet, useServerPost } from './api/api.js';
 import { getCsrfToken } from './api/csrf.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import DataSetView from './DataSetView.js';
-import type { RowAction } from './Grid.js';
+import type { GridLabels, RowAction } from './Grid.js';
 import Grid from './Grid.js';
+import type { DialogLabels } from './ServerGridEditDialog.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import './styles/Admin.css';
 
@@ -22,19 +23,8 @@ type ServerGridLabels = {
   cancelLabel?: string;
   editTitle?: string;
   addTitle?: string;
-  saveLabel?: string;
-  closeLabel?: string;
-  previousLabel?: string;
-  nextLabel?: string;
-  pageLabel?: string;
-  ofLabel?: string;
-  actionsHeader?: string;
-  edit?: string;
-  delete?: string;
-  previous?: string;
-  next?: string;
-  page?: string;
-  of?: string;
+  grid?: GridLabels;
+  dialog?: DialogLabels;
 };
 
 type ColumnConfig = {
@@ -104,26 +94,23 @@ export default function ServerGrid({
   labels = {},
   ...rest // anything else you want to pass to Grid
 }: ServerGridProps): React.JSX.Element {
-  const text = {
-    loading: labels.loading ?? 'Loading...',
-    add: labels.add ?? 'Add',
-    updateFailed: labels.updateFailed ?? 'Failed to update item',
-    itemUpdated: labels.itemUpdated ?? 'Item updated successfully!',
-    listViewRequiresProps: labels.listViewRequiresProps ?? 'List view requires both renderItem and loadPage props.',
-    confirmDeleteTitle: labels.confirmDeleteTitle ?? 'Confirm deletion',
-    confirmDeleteMessage: labels.confirmDeleteMessage ?? 'Are you sure you want to remove this item?',
-    confirmDeleteLabel: labels.confirmDeleteLabel ?? 'Delete',
-    deletingLabel: labels.deletingLabel ?? 'Deleting...',
-    cancelLabel: labels.cancelLabel ?? 'Cancel',
-    editTitle: labels.editTitle ?? 'Edit',
-    addTitle: labels.addTitle ?? 'Add',
-    saveLabel: labels.saveLabel ?? 'Save',
-    closeLabel: labels.closeLabel ?? 'Close',
-    previousLabel: labels.previousLabel ?? 'Previous',
-    nextLabel: labels.nextLabel ?? 'Next',
-    pageLabel: labels.pageLabel ?? 'Page',
-    ofLabel: labels.ofLabel ?? 'of',
-  };
+  const text = useMemo(
+    () => ({
+      loading: labels.loading ?? 'Loading...',
+      add: labels.add ?? 'Add',
+      updateFailed: labels.updateFailed ?? 'Failed to update item',
+      itemUpdated: labels.itemUpdated ?? 'Item updated successfully!',
+      listViewRequiresProps: labels.listViewRequiresProps ?? 'List view requires both renderItem and loadPage props.',
+      confirmDeleteTitle: labels.confirmDeleteTitle ?? 'Confirm deletion',
+      confirmDeleteMessage: labels.confirmDeleteMessage ?? 'Are you sure you want to remove this item?',
+      confirmDeleteLabel: labels.confirmDeleteLabel ?? 'Delete',
+      deletingLabel: labels.deletingLabel ?? 'Deleting...',
+      cancelLabel: labels.cancelLabel ?? 'Cancel',
+      editTitle: labels.editTitle ?? 'Edit',
+      addTitle: labels.addTitle ?? 'Add',
+    }),
+    [labels],
+  );
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -295,16 +282,7 @@ export default function ServerGrid({
           pageSize={pageSize}
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
-          labels={{
-            actionsHeader: labels.actionsHeader ?? 'Actions',
-            edit: labels.edit ?? 'Edit',
-            add: text.add,
-            delete: labels.delete ?? 'Delete',
-            previous: text.previousLabel,
-            next: text.nextLabel,
-            page: text.pageLabel,
-            of: text.ofLabel,
-          }}
+          {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
           {...(onAddUsers ? { onAddUsers } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...rest}
@@ -343,10 +321,8 @@ export default function ServerGrid({
           onSave={() => handleAddRow(formData)}
           formComponent={<FormComponent data={formData} setData={setFormData} />}
           labels={{
+            ...(labels.dialog ?? {}),
             title: text.addTitle,
-            save: text.saveLabel,
-            cancel: text.cancelLabel,
-            close: text.closeLabel,
           }}
         />
       )}
@@ -358,10 +334,8 @@ export default function ServerGrid({
           onSave={handleSaveEdit}
           formComponent={<FormComponent data={formData} setData={setFormData} />}
           labels={{
+            ...(labels.dialog ?? {}),
             title: text.editTitle,
-            save: text.saveLabel,
-            cancel: text.cancelLabel,
-            close: text.closeLabel,
           }}
         />
       )}
@@ -385,10 +359,10 @@ export default function ServerGrid({
               opacity: currentPage === 1 ? 0.5 : 1,
             }}
           >
-            {text.previousLabel}
+            {labels.grid?.previous ?? 'Previous'}
           </button>
           <span>
-            {text.pageLabel} {currentPage} {text.ofLabel} {totalPages}
+            {labels.grid?.page ?? 'Page'} {currentPage} {labels.grid?.of ?? 'of'} {totalPages}
           </span>
           <button
             onClick={handleNextPage}
@@ -399,7 +373,7 @@ export default function ServerGrid({
               opacity: currentPage === totalPages ? 0.5 : 1,
             }}
           >
-            {text.nextLabel}
+            {labels.grid?.next ?? 'Next'}
           </button>
         </div>
       )}

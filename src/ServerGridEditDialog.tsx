@@ -1,10 +1,17 @@
 import React from 'react';
 
-type DialogLabels = {
+export type DialogLabels = {
   title?: string;
   save?: string;
   cancel?: string;
   close?: string;
+};
+
+const defaultDialogLabels: Required<DialogLabels> = {
+  title: 'Add',
+  save: 'Save',
+  cancel: 'Cancel',
+  close: 'Close',
 };
 
 type ServerGridEditDialogProp = {
@@ -21,10 +28,10 @@ export default function ServerGridEditDialog({
   onSave,
   labels = {},
 }: ServerGridEditDialogProp): React.JSX.Element {
-  const title = labels.title ?? (isEditing ? 'Edit' : 'Add');
-  const cancelLabel = labels.cancel ?? 'Cancel';
-  const saveLabel = labels.save ?? 'Save';
-  const closeLabel = labels.close ?? 'Close';
+  const title = labels.title ?? (isEditing ? 'Edit' : defaultDialogLabels.title);
+  const cancelLabel = labels.cancel ?? defaultDialogLabels.cancel;
+  const saveLabel = labels.save ?? defaultDialogLabels.save;
+  const closeLabel = labels.close ?? defaultDialogLabels.close;
   const handleSave = () => onSave();
   const handleCancel = () => onCancel();
 
