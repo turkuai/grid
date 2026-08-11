@@ -58,7 +58,7 @@ type ServerGridProps = {
   showNot: (message: string, type: 'success' | 'error') => void;
   onAddUsers?: (row: RowData) => void;
   rowActions?: RowAction[];
-  labels?: ServerGridLabels;
+  labels: ServerGridLabels;
 };
 
 type FormComponentProps = {
@@ -97,23 +97,23 @@ export default function ServerGrid({
   showNot,
   onAddUsers,
   rowActions,
-  labels = {},
+  labels,
   ...rest // anything else you want to pass to Grid
 }: ServerGridProps): React.JSX.Element {
   const text = useMemo(
     () => ({
-      loading: labels.loading ?? 'Loading...',
-      add: labels.add ?? 'Add',
-      updateFailed: labels.updateFailed ?? 'Failed to update item',
-      itemUpdated: labels.itemUpdated ?? 'Item updated successfully!',
-      listViewRequiresProps: labels.listViewRequiresProps ?? 'List view requires both renderItem and loadPage props.',
-      confirmDeleteTitle: labels.confirmDeleteTitle ?? 'Confirm deletion',
-      confirmDeleteMessage: labels.confirmDeleteMessage ?? 'Are you sure you want to remove this item?',
-      confirmDeleteLabel: labels.confirmDeleteLabel ?? 'Delete',
-      deletingLabel: labels.deletingLabel ?? 'Deleting...',
-      cancelLabel: labels.cancelLabel ?? 'Cancel',
-      editTitle: labels.editTitle ?? 'Edit',
-      addTitle: labels.addTitle ?? 'Add',
+      loading: labels.loading,
+      add: labels.add,
+      updateFailed: labels.updateFailed,
+      itemUpdated: labels.itemUpdated,
+      listViewRequiresProps: labels.listViewRequiresProps,
+      confirmDeleteTitle: labels.confirmDeleteTitle,
+      confirmDeleteMessage: labels.confirmDeleteMessage,
+      confirmDeleteLabel: labels.confirmDeleteLabel,
+      deletingLabel: labels.deletingLabel,
+      cancelLabel: labels.cancelLabel,
+      editTitle: labels.editTitle,
+      addTitle: labels.addTitle,
     }),
     [labels],
   );
