@@ -23,27 +23,20 @@ type ColumnConfig = {
   valueGetter?: (row: RowData) => unknown;
 };
 
-export type GridLabels = {
-  actionsHeader?: string;
-  edit?: string;
-  add?: string;
-  delete?: string;
-  previous?: string;
-  next?: string;
-  page?: string;
-  of?: string;
-};
+export class GridLabels {
+  actionsHeader = 'Actions';
+  edit = 'Edit';
+  add = 'Add';
+  delete = 'Delete';
+  previous = 'Previous';
+  next = 'Next';
+  page = 'Page';
+  of = 'of';
 
-const defaultGridLabels: Required<GridLabels> = {
-  actionsHeader: 'Actions',
-  edit: 'Edit',
-  add: 'Add',
-  delete: 'Delete',
-  previous: 'Previous',
-  next: 'Next',
-  page: 'Page',
-  of: 'of',
-};
+  constructor(init?: Partial<GridLabels>) {
+    if (init) Object.assign(this, init);
+  }
+}
 
 const formatHeader = (str: unknown) =>
   typeof str !== 'string'
@@ -77,7 +70,7 @@ type GridProps = {
   onRowClick?: (row: RowData) => void;
   onAddUsers?: (row: RowData) => void;
   rowActions?: RowAction[];
-  labels?: GridLabels;
+  labels?: Partial<GridLabels>;
 };
 
 export default function Grid({
@@ -101,19 +94,7 @@ export default function Grid({
     setRows(Array.isArray(data) ? data : []);
   }, [data]);
 
-  const gridLabels = useMemo(
-    () => ({
-      actionsHeader: labels.actionsHeader ?? defaultGridLabels.actionsHeader,
-      edit: labels.edit ?? defaultGridLabels.edit,
-      add: labels.add ?? defaultGridLabels.add,
-      delete: labels.delete ?? defaultGridLabels.delete,
-      previous: labels.previous ?? defaultGridLabels.previous,
-      next: labels.next ?? defaultGridLabels.next,
-      page: labels.page ?? defaultGridLabels.page,
-      of: labels.of ?? defaultGridLabels.of,
-    }),
-    [labels],
-  );
+  const gridLabels = useMemo(() => new GridLabels(labels), [labels]);
 
   const cols = useMemo<ColumnDef<RowData>[]>(() => {
     const list = Array.isArray(columns) && columns.length > 0 ? columns : rows[0] ? Object.keys(rows[0]) : [];
