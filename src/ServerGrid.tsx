@@ -10,22 +10,28 @@ import type { DialogLabels } from './ServerGridEditDialog.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import './styles/Admin.css';
 
-type ServerGridLabels = {
-  loading?: string;
-  add?: string;
-  updateFailed?: string;
-  itemUpdated?: string;
-  listViewRequiresProps?: string;
-  confirmDeleteTitle?: string;
-  confirmDeleteMessage?: string;
-  confirmDeleteLabel?: string;
-  deletingLabel?: string;
-  cancelLabel?: string;
-  editTitle?: string;
-  addTitle?: string;
+class ServerGridLabels {
+  loading: string = 'Loading...';
+  add: string = 'Add';
+  updateFailed: string = 'Failed to update item';
+  itemUpdated: string = 'Item updated successfully!';
+  listViewRequiresProps: string = 'List view requires both renderItem and loadPage props.';
+  confirmDeleteTitle: string = 'Confirm deletion';
+  confirmDeleteMessage: string = 'Are you sure you want to remove this item?';
+  confirmDeleteLabel: string = 'Delete';
+  deletingLabel: string = 'Deleting...';
+  cancelLabel: string = 'Cancel';
+  editTitle: string = 'Edit';
+  addTitle: string = 'Add';
   grid?: GridLabels;
   dialog?: DialogLabels;
-};
+
+  constructor(overrides?: Partial<ServerGridLabels>) {
+    if (overrides) {
+      Object.assign(this, overrides);
+    }
+  }
+}
 
 type ColumnConfig = {
   field: string;
