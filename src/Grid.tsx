@@ -64,7 +64,7 @@ export default function Grid({
   allowEditing = false,
   allowDelete = false,
   pageSize = 20,
-  height = '500px',
+  height = '100%',
   onEditRow,
   onDeleteRow,
   onRowClick,
@@ -157,7 +157,7 @@ export default function Grid({
   });
 
   return (
-    <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
+    <div className="grid-wrapper" style={{ width: '100%', height: "100%", overflowX: 'auto' }}>
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
