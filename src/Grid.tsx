@@ -157,7 +157,7 @@ export default function Grid({
   });
 
   return (
-    <div className="grid-wrapper" style={{ width: '100%', height: "100%", overflowX: 'auto' }}>
+    <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
