@@ -68,7 +68,6 @@ type GridProps = {
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
-  onAddUsers?: (row: RowData) => void;
   rowActions?: RowAction[];
   labels?: Partial<GridLabels>;
 };
@@ -84,7 +83,6 @@ export default function Grid({
   onEditRow,
   onDeleteRow,
   onRowClick,
-  onAddUsers,
   rowActions,
   labels = {},
 }: GridProps): React.JSX.Element {
@@ -114,7 +112,7 @@ export default function Grid({
         },
       };
     });
-    if (!allowEditing && !allowDelete && !onAddUsers && (!rowActions || rowActions.length === 0)) return dataCols;
+    if (!allowEditing && !allowDelete && (!rowActions || rowActions.length === 0)) return dataCols;
 
     return [
       ...dataCols,
@@ -165,7 +163,7 @@ export default function Grid({
         },
       },
     ];
-  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, onAddUsers, rowActions, gridLabels]);
+  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, rowActions, gridLabels]);
 
   const table = useReactTable({
     data: rows,

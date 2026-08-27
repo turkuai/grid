@@ -56,7 +56,6 @@ type ServerGridProps = {
   loadPage?: (page: number) => Promise<RowData[]>;
   getApiBase: () => string;
   showNot: (message: string, type: 'success' | 'error') => void;
-  onAddUsers?: (row: RowData) => void;
   rowActions?: RowAction[];
   labels: ServerGridLabels;
 };
@@ -64,15 +63,6 @@ type ServerGridProps = {
 type FormComponentProps = {
   data: FormDataState;
   setData: Dispatch<SetStateAction<FormDataState>>;
-};
-
-type PayloadProp = {
-  name?: string;
-  first_name?: string;
-  last_name?: string;
-  id?: number | string;
-  created_at?: string;
-  updated_at?: string;
 };
 
 type FormDataState = Record<string, unknown>;
@@ -95,7 +85,6 @@ export default function ServerGrid({
   loadPage,
   getApiBase,
   showNot,
-  onAddUsers,
   rowActions,
   labels,
   ...rest // anything else you want to pass to Grid
@@ -189,18 +178,9 @@ export default function ServerGrid({
       delete payload.id;
       delete payload.created_at;
       delete payload.updated_at;
-      delete payload.username;
-
-      // Remove "name" field if first_name/last_name exist
-      if ('first_name' in payload || 'last_name' in payload) {
-        delete payload.name;
-      }
 
       // Apply transformEditPayload if provided
-      let finalPayload = typeof transformEditPayload === 'function' ? transformEditPayload(payload, { path }) : payload;
-
-      // Remove confirmPassword after transformation
-      delete finalPayload.confirmPassword;
+      const finalPayload = typeof transformEditPayload === 'function' ? transformEditPayload(payload, { path }) : payload;
 
       const res = await fetch(getApiBase() + updateUrl, {
         method: 'PATCH',
@@ -289,7 +269,7 @@ export default function ServerGrid({
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
           {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
-          {...(onAddUsers ? { onAddUsers } : {})}
+          {...(rowActions ? { rowActions } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...rest}
         />
