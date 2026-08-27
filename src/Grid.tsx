@@ -1,13 +1,13 @@
-import { useMemo, useState, useEffect } from 'react';
 import {
-  useReactTable,
-  type ColumnDef,
-  type CellContext,
-  getCoreRowModel,
-  getSortedRowModel,
-  getPaginationRowModel,
   flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type CellContext,
+  type ColumnDef,
 } from '@tanstack/react-table';
+import { useEffect, useMemo, useState } from 'react';
 import './styles/Grid.css';
 
 type RowData = Record<string, unknown>;
@@ -23,18 +23,32 @@ type ColumnConfig = {
   valueGetter?: (row: RowData) => unknown;
 };
 
+export class GridLabels {
+  actionsHeader = 'Actions';
+  edit = 'Edit';
+  add = 'Add';
+  delete = 'Delete';
+  previous = 'Previous';
+  next = 'Next';
+  page = 'Page';
+  of = 'of';
+
+  constructor(init?: Partial<GridLabels>) {
+    if (init) Object.assign(this, init);
+  }
+}
+
 const formatHeader = (str: unknown) =>
   typeof str !== 'string'
     ? ''
     : str
-      .split('_')
-      .map((w) => w[0]!.toUpperCase() + w.slice(1))
-      .join(' ');
+        .split('_')
+        .map((w) => w[0]!.toUpperCase() + w.slice(1))
+        .join(' ');
 
 const getField = (col: string | ColumnConfig) => (typeof col === 'object' ? col.field : col);
 
-const getHeader = (col: string | ColumnConfig) =>
-  (typeof col === 'object' && col.displayName) || formatHeader(getField(col));
+const getHeader = (col: string | ColumnConfig) => (typeof col === 'object' && col.displayName) || formatHeader(getField(col));
 
 export type RowAction = {
   icon: React.ReactNode;
@@ -50,11 +64,12 @@ type GridProps = {
   allowEditing?: boolean;
   allowDelete?: boolean;
   pageSize?: number;
-  height?: string,
+  height?: string;
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
   rowActions?: RowAction[];
+  labels?: Partial<GridLabels>;
 };
 
 export default function Grid({
@@ -69,6 +84,7 @@ export default function Grid({
   onDeleteRow,
   onRowClick,
   rowActions,
+  labels = {},
 }: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
 
@@ -76,12 +92,10 @@ export default function Grid({
     setRows(Array.isArray(data) ? data : []);
   }, [data]);
 
+  const gridLabels = useMemo(() => new GridLabels(labels), [labels]);
+
   const cols = useMemo<ColumnDef<RowData>[]>(() => {
-    const list = Array.isArray(columns) && columns.length > 0
-      ? columns
-      : rows[0]
-        ? Object.keys(rows[0])
-        : [];
+    const list = Array.isArray(columns) && columns.length > 0 ? columns : rows[0] ? Object.keys(rows[0]) : [];
 
     const dataCols = list.map((col) => {
       const id = getField(col);
@@ -94,23 +108,23 @@ export default function Grid({
         cell: ({ row, getValue }: CellContext<RowData, unknown>) => {
           const value = colObj.valueGetter ? colObj.valueGetter(row.original) : getValue();
           const Renderer = columnRenderers[id];
-          return Renderer ? <Renderer value={value} data={row.original} /> : (value != null ? String(value) : '');
+          return Renderer ? <Renderer value={value} data={row.original} /> : value != null ? String(value) : '';
         },
       };
     });
     if (!allowEditing && !allowDelete && (!rowActions || rowActions.length === 0)) return dataCols;
+
     return [
       ...dataCols,
       {
         id: 'actions',
-        header: 'Actions',
+        header: gridLabels.actionsHeader,
         enableSorting: false,
         cell: ({ row }) => {
           const r = row.original;
           return (
-            
             <div className="grid-actions">
-            {rowActions?.map((action, i) => (
+              {rowActions?.map((action, i) => (
                 <button
                   key={i}
                   type="button"
@@ -124,28 +138,32 @@ export default function Grid({
               ))}
 
               {allowEditing && (
-                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label="Edit" title='Edit'>
+                <button type="button" onClick={() => onEditRow?.(r)} className="icon-btn" aria-label={gridLabels.edit} title={gridLabels.edit}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M3 21l3.75-1 11.1-11.1a1.5 1.5 0 000-2.12L14.23 2.16a1.5 1.5 0 00-2.12 0L1 13.27V17h3.73L3 21z" fill="#111827" />
                   </svg>
                 </button>
               )}
-              
+
               {allowDelete && (
-                <button type="button" onClick={() => onDeleteRow?.(r)} className="icon-btn danger" aria-label="Delete" title='Delete'>
+                <button
+                  type="button"
+                  onClick={() => onDeleteRow?.(r)}
+                  className="icon-btn danger"
+                  aria-label={gridLabels.delete}
+                  title={gridLabels.delete}
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                     <path d="M9 3h6l1 2h5v2H3V5h5l1-2zm1 7h2v9h-2v-9zm4 0h2v9h-2v-9zM7 10h2v9H7v-9z" fill="#DC2626" />
                   </svg>
                 </button>
               )}
-
-              
             </div>
           );
         },
       },
     ];
-  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, rowActions]);
+  }, [columns, columnRenderers, rows, allowEditing, allowDelete, onEditRow, onDeleteRow, rowActions, gridLabels]);
 
   const table = useReactTable({
     data: rows,
@@ -163,11 +181,7 @@ export default function Grid({
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
               {hg.headers.map((h) => (
-                <th
-                  key={h.id}
-                  onClick={h.column.getToggleSortingHandler()}
-                  className={h.column.getCanSort() ? 'sortable' : ''}
-                >
+                <th key={h.id} onClick={h.column.getToggleSortingHandler()} className={h.column.getCanSort() ? 'sortable' : ''}>
                   {flexRender(h.column.columnDef.header, h.getContext())}
                   {h.column.getIsSorted() === 'asc' ? ' ↑' : h.column.getIsSorted() === 'desc' ? ' ↓' : ''}
                 </th>
@@ -177,11 +191,7 @@ export default function Grid({
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr
-              key={row.id}
-              onClick={() => onRowClick?.(row.original)}
-              style={{ cursor: onRowClick ? 'pointer' : 'default' }}
-            >
+            <tr key={row.id} onClick={() => onRowClick?.(row.original)} style={{ cursor: onRowClick ? 'pointer' : 'default' }}>
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
               ))}
@@ -191,24 +201,14 @@ export default function Grid({
       </table>
       {table.getPageCount() > 1 && (
         <div className="grid-pagination">
-          <button
-            type="button"
-            className="btn-page"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
+          <button type="button" className="btn-page" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+            {gridLabels.previous}
           </button>
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            {gridLabels.page} {table.getState().pagination.pageIndex + 1} {gridLabels.of} {table.getPageCount()}
           </span>
-          <button
-            type="button"
-            className="btn-page"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
+          <button type="button" className="btn-page" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            {gridLabels.next}
           </button>
         </div>
       )}

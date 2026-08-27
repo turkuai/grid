@@ -88,7 +88,6 @@
   cursor: not-allowed;
 }
 
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -232,6 +231,17 @@
 
 .data-grid-table tbody tr:hover {
   background: #f9fafb;
+}
+
+.data-grid-table th:last-child,
+.data-grid-table td:last-child {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Shrinks the actions column to its content width so data columns expand to fill available space */
+.data-grid-table td:last-child {
+  width: 1%;
 }
 
 /* Mobile AG Grid Styles */
