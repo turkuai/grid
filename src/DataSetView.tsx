@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 type RowData = Record<string, unknown>;
 type DataSetViewProps = {
@@ -22,7 +22,7 @@ export default function DataSetView({ render: Render, loadPage }: DataSetViewPro
     }
   };
   return (
-    <div style={{ height: "100%", overflowY: "auto" }} onScroll={handleScroll}>
+    <div style={{ height: '100%', overflowY: 'auto' }} onScroll={handleScroll}>
       <div>
         {items.map((item, index) => (
           <Render key={index} data={item} />

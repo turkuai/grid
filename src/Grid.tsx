@@ -39,14 +39,14 @@ export class GridLabels {
 }
 
 const formatHeader = (str: unknown) =>
-  typeof str !== "string"
-    ? ""
+  typeof str !== 'string'
+    ? ''
     : str
         .split('_')
         .map((w) => w[0]!.toUpperCase() + w.slice(1))
         .join(' ');
 
-const getField = (col: string | ColumnConfig) => (typeof col === "object" ? col.field : col);
+const getField = (col: string | ColumnConfig) => (typeof col === 'object' ? col.field : col);
 
 const getHeader = (col: string | ColumnConfig) => (typeof col === 'object' && col.displayName) || formatHeader(getField(col));
 
@@ -99,7 +99,7 @@ export default function Grid({
 
     const dataCols = list.map((col) => {
       const id = getField(col);
-      const colObj = typeof col === "object" ? col : { field: id };
+      const colObj = typeof col === 'object' ? col : { field: id };
       return {
         id,
         accessorKey: id,
@@ -129,7 +129,7 @@ export default function Grid({
                   key={i}
                   type="button"
                   onClick={() => action.onClick(r)}
-                  className={`icon-btn${action.className ? ` ${action.className}` : ""}`}
+                  className={`icon-btn${action.className ? ` ${action.className}` : ''}`}
                   aria-label={action.tooltip}
                   title={action.tooltip}
                 >
@@ -175,7 +175,7 @@ export default function Grid({
   });
 
   return (
-    <div className="grid-wrapper" style={{ width: "100%", height, overflowX: "auto" }}>
+    <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
@@ -183,7 +183,7 @@ export default function Grid({
               {hg.headers.map((h) => (
                 <th key={h.id} onClick={h.column.getToggleSortingHandler()} className={h.column.getCanSort() ? 'sortable' : ''}>
                   {flexRender(h.column.columnDef.header, h.getContext())}
-                  {h.column.getIsSorted() === "asc" ? " ↑" : h.column.getIsSorted() === "desc" ? " ↓" : ""}
+                  {h.column.getIsSorted() === 'asc' ? ' ↑' : h.column.getIsSorted() === 'desc' ? ' ↓' : ''}
                 </th>
               ))}
             </tr>

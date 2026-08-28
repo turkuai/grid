@@ -1,4 +1,4 @@
-import "./styles/Admin.css";
+import './styles/Admin.css';
 
 type ConfirmDialogProp = {
   isOpen: boolean;
@@ -14,8 +14,8 @@ export default function ConfirmDialog({
   isOpen,
   title,
   message,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
   onConfirm,
   onCancel,
   isDestructive = true,
@@ -35,7 +35,7 @@ export default function ConfirmDialog({
           </button>
           <button
             type="button"
-            className={["confirm-dialog__button", isDestructive ? "confirm-dialog__button--danger" : "confirm-dialog__button--primary"].join(" ")}
+            className={['confirm-dialog__button', isDestructive ? 'confirm-dialog__button--danger' : 'confirm-dialog__button--primary'].join(' ')}
             onClick={onConfirm}
           >
             {confirmLabel}

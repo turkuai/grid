@@ -117,7 +117,7 @@ export default function ServerGrid({
   const [formData, setFormData] = useState<FormDataState>({});
   const [deleteTarget, setDeleteTarget] = useState<RowData | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-  const isListMode = viewMode === "list";
+  const isListMode = viewMode === 'list';
   // const { showNotification } = showNot();
 
   // If search query changes, jump back to first page
@@ -126,7 +126,7 @@ export default function ServerGrid({
   }, [query]);
 
   // Use hooks for HTTP operations
-  const fetchData = useServerGet(path, currentPage, query ?? "", setData, setTotalPages, setLoading, setError, getApiBase);
+  const fetchData = useServerGet(path, currentPage, query ?? '', setData, setTotalPages, setLoading, setError, getApiBase);
   const performDelete = useServerDelete(path, fetchData, setError, showNot, getApiBase);
   const handleAddRow = useServerPost(path, fetchData, setIsAdding, transformAddPayload, showNot, getApiBase);
 
@@ -143,7 +143,7 @@ export default function ServerGrid({
 
   const handleEditRequest = (row: RowData) => {
     if (!row || !row.id) {
-      console.error("Row has no ID");
+      console.error('Row has no ID');
       return;
     }
     // Set form data to row's data and open edit dialog
@@ -160,14 +160,14 @@ export default function ServerGrid({
 
   const handleSaveEdit = async () => {
     if (!editingRow || !editingRow.id) {
-      console.error("No row to edit");
+      console.error('No row to edit');
       return;
     }
 
     try {
-      let updateUrl = `${path.split("?")[0]}/${editingRow.id}`;
-      if (!updateUrl.startsWith("/api/")) {
-        const cleanPath = updateUrl.startsWith("/") ? updateUrl.slice(1) : updateUrl;
+      let updateUrl = `${path.split('?')[0]}/${editingRow.id}`;
+      if (!updateUrl.startsWith('/api/')) {
+        const cleanPath = updateUrl.startsWith('/') ? updateUrl.slice(1) : updateUrl;
         updateUrl = `/api/${cleanPath}`;
       }
 
@@ -183,11 +183,11 @@ export default function ServerGrid({
       const finalPayload = typeof transformEditPayload === 'function' ? transformEditPayload(payload, { path }) : payload;
 
       const res = await fetch(getApiBase() + updateUrl, {
-        method: "PATCH",
-        credentials: "include",
+        method: 'PATCH',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-TOKEN": getCsrfToken(),
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': getCsrfToken(),
         },
         body: JSON.stringify(finalPayload),
       });

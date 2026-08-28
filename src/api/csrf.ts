@@ -5,7 +5,7 @@ export function getCsrfToken(): string {
   if (metaTag) {
     return metaTag.getAttribute('content') || '';
   }
-  
+
   // Fallback to cookie
   const name = 'XSRF-TOKEN';
   const value = `; ${document.cookie}`;
@@ -17,6 +17,6 @@ export function getCsrfToken(): string {
       return '';
     }
   }
-  
+
   return '';
 }
