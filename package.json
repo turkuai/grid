@@ -22,12 +22,16 @@
     "build": "npx vite build && tsc --emitDeclarationOnly",
     "lint": "eslint .",
     "preview": "npx vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write src/",
+    "format:check": "prettier --check src/"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",
     "@yudiel/react-qr-scanner": "^2.5.1",
     "lucide-react": "^0.575.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
