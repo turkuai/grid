@@ -1,20 +1,44 @@
-import type { ReactNode } from 'react';
+import React from 'react';
+
+export type DialogLabels = {
+  title?: string;
+  save?: string;
+  cancel?: string;
+  close?: string;
+};
+
+const defaultDialogLabels: Required<DialogLabels> = {
+  title: 'Add',
+  save: 'Save',
+  cancel: 'Cancel',
+  close: 'Close',
+};
+
 type ServerGridEditDialogProp = {
-  formComponent: ReactNode;
+  formComponent: React.ReactNode;
   isEditing?: boolean;
   onCancel: () => void;
   onSave: () => void;
+  labels?: DialogLabels;
 };
-export default function ServerGridEditDialog({ formComponent, isEditing = false, onCancel, onSave }: ServerGridEditDialogProp): React.JSX.Element {
-  const title = isEditing ? 'Edit' : 'Add';
-
+export default function ServerGridEditDialog({
+  formComponent,
+  isEditing = false,
+  onCancel,
+  onSave,
+  labels = {},
+}: ServerGridEditDialogProp): React.JSX.Element {
+  const title = labels.title ?? (isEditing ? 'Edit' : defaultDialogLabels.title);
+  const cancelLabel = labels.cancel ?? defaultDialogLabels.cancel;
+  const saveLabel = labels.save ?? defaultDialogLabels.save;
+  const closeLabel = labels.close ?? defaultDialogLabels.close;
   const handleSave = () => onSave();
   const handleCancel = () => onCancel();
 
   return (
     <div className="sg-modal-overlay" onClick={handleCancel}>
       <div className="sg-modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '520px' }}>
-        <button onClick={handleCancel} className="sg-modal-close" aria-label="Close">
+        <button onClick={handleCancel} className="sg-modal-close" aria-label={closeLabel}>
           ×
         </button>
 
@@ -24,10 +48,10 @@ export default function ServerGridEditDialog({ formComponent, isEditing = false,
 
         <div style={{ marginTop: '16px', display: 'flex', gap: '12px' }}>
           <button type="button" className="sg-modal-cancel-btn" style={{ backgroundColor: '#111827' }} onClick={handleCancel}>
-            Cancel
+            {cancelLabel}
           </button>
-          <button type="button" className="sg-modal-save-btn" style={{ backgroundColor: '#Ce1717' }} onClick={handleSave}>
-            Save
+          <button type="button" className="sg-modal-save-btn" style={{ backgroundColor: '#ce1717' }} onClick={handleSave}>
+            {saveLabel}
           </button>
         </div>
       </div>
