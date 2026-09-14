@@ -10,7 +10,7 @@ import type { DialogLabels } from './ServerGridEditDialog.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import './styles/Admin.css';
 
-class ServerGridLabels {
+export class ServerGridLabels {
   loading: string = 'Loading...';
   add: string = 'Add';
   updateFailed: string = 'Failed to update item';
