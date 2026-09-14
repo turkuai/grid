@@ -50,7 +50,7 @@ export default function ServerGridEditDialog({
           <button type="button" className="sg-modal-cancel-btn" style={{ backgroundColor: '#111827' }} onClick={handleCancel}>
             {cancelLabel}
           </button>
-          <button type="button" className="sg-modal-save-btn" style={{ backgroundColor: '#22c55e' }} onClick={handleSave}>
+          <button type="button" className="sg-modal-save-btn" style={{ backgroundColor: '#ce1717' }} onClick={handleSave}>
             {saveLabel}
           </button>
         </div>
