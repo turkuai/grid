@@ -2,12 +2,16 @@ import { useCallback } from 'react';
 import { getCsrfToken } from './csrf.js';
 
 type RowData = Record<string, unknown>;
-export function useServerGet(path: string, currentPage: number, query: string,
+export function useServerGet(
+  path: string,
+  currentPage: number,
+  query: string,
   setData: React.Dispatch<React.SetStateAction<RowData[]>>,
   setTotalPages: React.Dispatch<React.SetStateAction<number>>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
-  getApiBase: () => string) {
+  getApiBase: () => string,
+) {
   const fetchData = useCallback(async () => {
     if (!path) return;
     setLoading(true);
@@ -48,9 +52,7 @@ export function useServerGet(path: string, currentPage: number, query: string,
           payload = await res.json();
         } catch (parseErr) {
           const text = await res.text().catch(() => '');
-          const message = text
-            ? `Invalid JSON response: ${text.slice(0, 200)}`
-            : 'Invalid JSON response from server.';
+          const message = text ? `Invalid JSON response: ${text.slice(0, 200)}` : 'Invalid JSON response from server.';
           throw new Error(message);
         }
       } else {
@@ -61,28 +63,18 @@ export function useServerGet(path: string, currentPage: number, query: string,
         throw new Error(message);
       }
 
-      const payloadObj = (!Array.isArray(payload) && typeof payload === 'object' && payload !== null)
-        ? payload as Record<string, unknown>
-        : {};
+      const payloadObj = !Array.isArray(payload) && typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : {};
       const payloadError = typeof payloadObj.error === 'string' ? payloadObj.error : '';
       const payloadMessage = typeof payloadObj.message === 'string' ? payloadObj.message : '';
 
       if (!res.ok) {
-        throw new Error(
-          payloadError ||
-          payloadMessage ||
-          `Request failed with status ${res.status}`
-        );
+        throw new Error(payloadError || payloadMessage || `Request failed with status ${res.status}`);
       }
 
       // Handle different response structures:
       // Support array response or object with a "data" key, or any other array-valued key as fallback
-      const dataKey = Array.isArray(payload)
-        ? null
-        : Object.keys(payloadObj).find((k) => Array.isArray(payloadObj[k]));
-      const rows = Array.isArray(payload)
-        ? payload
-        : (dataKey ? (payloadObj[dataKey] as RowData[]) : []);
+      const dataKey = Array.isArray(payload) ? null : Object.keys(payloadObj).find((k) => Array.isArray(payloadObj[k]));
+      const rows = Array.isArray(payload) ? payload : dataKey ? (payloadObj[dataKey] as RowData[]) : [];
       const pages = typeof payloadObj.totalPages === 'number' ? payloadObj.totalPages : 1;
       setData(rows);
       setTotalPages(pages);
@@ -100,22 +92,24 @@ export function useServerPost(
   path: string,
   fetchData: () => Promise<void>,
   setIsAdding: React.Dispatch<React.SetStateAction<boolean>>,
+  setValidationErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
   transformAddPayload: ((payload: Record<string, unknown>, context: { path: string }) => Record<string, unknown>) | undefined,
   onNotify: (message: string, type: 'success' | 'error') => void,
-  getApiBase: () => string) {
+  getApiBase: () => string,
+) {
   const handleAddRow = async (newRowData: Record<string, unknown>) => {
     if (!path) return;
 
     try {
       let addUrl = path.includes('?') ? path.slice(0, path.indexOf('?')) : path;
-      // Ensure /api/ prefix if not present
+
       if (!addUrl.startsWith('/api/')) {
         const cleanPath = addUrl.startsWith('/') ? addUrl.slice(1) : addUrl;
         addUrl = `/api/${cleanPath}`;
       }
 
-      // Prepare payload - exclude technical fields
       let payload = { ...newRowData };
+
       delete payload.id;
       delete payload.created_at;
       delete payload.updated_at;
@@ -134,16 +128,22 @@ export function useServerPost(
 
       if (!res.ok) {
         let msg = 'Failed to add item';
+
         try {
           const errorData = await res.json();
+
+          if (errorData.errors) {
+            setValidationErrors(errorData.errors);
+          }
+
           msg = errorData.error || errorData.message || msg;
         } catch (_) {
           // ignore json parse error
         }
+
         throw new Error(msg);
       }
 
-      // Refresh data after successful addition
       await fetchData();
       setIsAdding(false);
       onNotify('Item added successfully!', 'success');
@@ -157,11 +157,12 @@ export function useServerPost(
 }
 
 export function useServerDelete(
-  path: string, fetchData: () => Promise<void>,
+  path: string,
+  fetchData: () => Promise<void>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
-  showNot: (message: string, type: "error" | "success") => void,
-  getApiBase: () => string) {
-
+  showNot: (message: string, type: 'error' | 'success') => void,
+  getApiBase: () => string,
+) {
   const performDelete = async (row: Record<string, unknown>) => {
     if (!row.id) return;
     try {
