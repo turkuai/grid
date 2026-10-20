@@ -69,6 +69,7 @@ type GridProps = {
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
   rowActions?: RowAction[];
+  topBarComponent?: React.ReactNode;
   labels?: Partial<GridLabels>;
 };
 
@@ -84,6 +85,7 @@ export default function Grid({
   onDeleteRow,
   onRowClick,
   rowActions,
+  topBarComponent,
   labels = {},
 }: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
@@ -176,6 +178,7 @@ export default function Grid({
 
   return (
     <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
+      {topBarComponent != null && <div className="grid-top-bar">{topBarComponent}</div>}
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
