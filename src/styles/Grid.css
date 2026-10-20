@@ -208,6 +208,10 @@
   margin-bottom: 10px;
 }
 
+.grid-search-bar {
+  padding: 8px;
+}
+
 .data-grid-table {
   width: 100%;
   border-collapse: collapse;

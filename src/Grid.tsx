@@ -57,6 +57,15 @@ export type RowAction = {
   className?: string;
 };
 
+type SearchBoxProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+function SearchBox({ value, onChange }: SearchBoxProps) {
+  return <input className="grid-search-bar" type="search" placeholder="Type here..." value={value} onChange={(event) => onChange(event.target.value)} />;
+}
+
 type GridProps = {
   columns: Array<string | ColumnConfig> | null;
   columnRenderers?: Record<string, React.ComponentType<ColumnRendererProps>>;
@@ -68,6 +77,7 @@ type GridProps = {
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
+  onSearch?: (search: string) => void;
   rowActions?: RowAction[];
   topBarComponent?: React.ReactNode;
   labels?: Partial<GridLabels>;
@@ -84,15 +94,23 @@ export default function Grid({
   onEditRow,
   onDeleteRow,
   onRowClick,
+  onSearch,
   rowActions,
   topBarComponent,
   labels = {},
 }: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
+  const [search, setSearch] = useState<string | null>(null);
 
   useEffect(() => {
     setRows(Array.isArray(data) ? data : []);
   }, [data]);
+
+  useEffect(() => {
+    if (search === null || !onSearch) return;
+    const timeout = setTimeout(() => onSearch(search), 350);
+    return () => clearTimeout(timeout);
+  }, [search, onSearch]);
 
   const gridLabels = useMemo(() => new GridLabels(labels), [labels]);
 
@@ -178,7 +196,10 @@ export default function Grid({
 
   return (
     <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
-      {topBarComponent != null && <div className="grid-top-bar">{topBarComponent}</div>}
+      <div className="grid-top-bar">
+        <SearchBox value={search ?? ''} onChange={setSearch} />
+        {topBarComponent}
+      </div>
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
