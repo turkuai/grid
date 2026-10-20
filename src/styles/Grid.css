@@ -201,6 +201,17 @@
   font-size: 14px;
 }
 
+.grid-top-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.grid-search-bar {
+  padding: 8px;
+}
+
 .data-grid-table {
   width: 100%;
   border-collapse: collapse;
