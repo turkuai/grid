@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 type RowData = Record<string, unknown>;
 type DataSetViewProps = {
@@ -7,12 +7,11 @@ type DataSetViewProps = {
 };
 
 export default function DataSetView({ render: Render, loadPage }: DataSetViewProps): React.JSX.Element {
-
   const [page, setPage] = useState<number>(1);
   const [items, setItems] = useState<RowData[]>([]);
   useEffect(() => {
     loadPage(page).then((pageItems) => {
-      setItems((prev) => [...prev, ...pageItems]);
+      setItems(page == 1 ? pageItems : (prev) => [...prev, ...pageItems]);
     });
   }, [page, loadPage]);
 
@@ -23,7 +22,7 @@ export default function DataSetView({ render: Render, loadPage }: DataSetViewPro
     }
   };
   return (
-    <div style={{ height: "100%", overflowY: "auto" }} onScroll={handleScroll}>
+    <div style={{ height: '100%', overflowY: 'auto' }} onScroll={handleScroll}>
       <div>
         {items.map((item, index) => (
           <Render key={index} data={item} />
