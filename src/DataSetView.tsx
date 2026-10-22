@@ -11,7 +11,7 @@ export default function DataSetView({ render: Render, loadPage }: DataSetViewPro
   const [items, setItems] = useState<RowData[]>([]);
   useEffect(() => {
     loadPage(page).then((pageItems) => {
-      setItems((prev) => [...prev, ...pageItems]);
+      setItems(page == 1 ? pageItems : (prev) => [...prev, ...pageItems]);
     });
   }, [page, loadPage]);
 
