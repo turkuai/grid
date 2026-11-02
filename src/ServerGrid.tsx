@@ -239,21 +239,6 @@ export default function ServerGrid({
       {loading && <div className="grid-loading-overlay">{text.loading}</div>}
       {error && <div className="grid-error-message">{error}</div>}
 
-      {/* Add Button */}
-      {showAddButton && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '1rem',
-          }}
-        >
-          <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
-            <Plus size={20} />
-          </button>
-        </div>
-      )}
-
       {isListMode ? (
         renderItem && loadPage ? (
           <DataSetView render={renderItem} loadPage={loadPage} />
@@ -271,6 +256,13 @@ export default function ServerGrid({
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
           onSearch={setSearch}
+          topBarComponent={
+            showAddButton ? (
+              <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
+                <Plus size={20} />
+              </button>
+            ) : undefined
+          }
           {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...(rowActions ? { rowActions } : {})}

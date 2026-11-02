@@ -32,6 +32,7 @@ export class GridLabels {
   next = 'Next';
   page = 'Page';
   of = 'of';
+  searchPlaceholder = 'Type here...';
 
   constructor(init?: Partial<GridLabels>) {
     if (init) Object.assign(this, init);
@@ -59,11 +60,20 @@ export type RowAction = {
 
 type SearchBoxProps = {
   value: string;
+  placeholder: string;
   onChange: (value: string) => void;
 };
 
-function SearchBox({ value, onChange }: SearchBoxProps) {
-  return <input className="grid-search-bar" type="search" placeholder="Type here..." value={value} onChange={(event) => onChange(event.target.value)} />;
+function SearchBox({ value, placeholder, onChange }: SearchBoxProps) {
+  return (
+    <div className="grid-search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="6" stroke="#6b7280" strokeWidth="2" />
+        <line x1="15" y1="15" x2="20" y2="20" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+      <input type="text" autoComplete="off" placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
+    </div>
+  );
 }
 
 type GridProps = {
@@ -107,7 +117,9 @@ export default function Grid({
   }, [data]);
 
   useEffect(() => {
-    if (search === null || !onSearch) return;
+    if (search === null || !onSearch) {
+      return;
+    }
     const timeout = setTimeout(() => onSearch(search), 350);
     return () => clearTimeout(timeout);
   }, [search, onSearch]);
@@ -197,7 +209,7 @@ export default function Grid({
   return (
     <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
       <div className="grid-top-bar">
-        <SearchBox value={search ?? ''} onChange={setSearch} />
+        {onSearch && <SearchBox value={search ?? ''} placeholder={gridLabels.searchPlaceholder} onChange={setSearch} />}
         {topBarComponent}
       </div>
       <table className="data-grid-table">

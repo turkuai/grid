@@ -206,10 +206,31 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 10px;
+  justify-content: space-between;
 }
 
-.grid-search-bar {
-  padding: 8px;
+.grid-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(100%, 300px);
+  padding: 0.15rem 0.75rem;
+  background: #f7f8fb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.grid-search-box input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.875rem;
+}
+
+.grid-search-box input::placeholder {
+  color: #9ca3af;
 }
 
 .data-grid-table {
