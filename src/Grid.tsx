@@ -32,6 +32,7 @@ export class GridLabels {
   next = 'Next';
   page = 'Page';
   of = 'of';
+  searchPlaceholder = 'Type here...';
 
   constructor(init?: Partial<GridLabels>) {
     if (init) Object.assign(this, init);
@@ -57,6 +58,24 @@ export type RowAction = {
   className?: string;
 };
 
+type SearchBoxProps = {
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+};
+
+function SearchBox({ value, placeholder, onChange }: SearchBoxProps) {
+  return (
+    <div className="grid-search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="11" cy="11" r="6" stroke="#6b7280" strokeWidth="2" />
+        <line x1="15" y1="15" x2="20" y2="20" stroke="#6b7280" strokeWidth="2" strokeLinecap="round" />
+      </svg>
+      <input type="text" autoComplete="off" placeholder={placeholder} value={value} onChange={(event) => onChange(event.target.value)} />
+    </div>
+  );
+}
+
 type GridProps = {
   columns: Array<string | ColumnConfig> | null;
   columnRenderers?: Record<string, React.ComponentType<ColumnRendererProps>>;
@@ -68,7 +87,9 @@ type GridProps = {
   onEditRow: (row: RowData) => void;
   onDeleteRow: (row: RowData) => void;
   onRowClick?: (row: RowData) => void;
+  onSearch?: (search: string) => void;
   rowActions?: RowAction[];
+  topBarComponent?: React.ReactNode;
   labels?: Partial<GridLabels>;
 };
 
@@ -83,14 +104,25 @@ export default function Grid({
   onEditRow,
   onDeleteRow,
   onRowClick,
+  onSearch,
   rowActions,
+  topBarComponent,
   labels = {},
 }: GridProps): React.JSX.Element {
   const [rows, setRows] = useState<RowData[]>(Array.isArray(data) ? data : []);
+  const [search, setSearch] = useState<string | null>(null);
 
   useEffect(() => {
     setRows(Array.isArray(data) ? data : []);
   }, [data]);
+
+  useEffect(() => {
+    if (search === null || !onSearch) {
+      return;
+    }
+    const timeout = setTimeout(() => onSearch(search), 350);
+    return () => clearTimeout(timeout);
+  }, [search, onSearch]);
 
   const gridLabels = useMemo(() => new GridLabels(labels), [labels]);
 
@@ -176,6 +208,10 @@ export default function Grid({
 
   return (
     <div className="grid-wrapper" style={{ width: '100%', height, overflowX: 'auto' }}>
+      <div className="grid-top-bar">
+        {onSearch && <SearchBox value={search ?? ''} placeholder={gridLabels.searchPlaceholder} onChange={setSearch} />}
+        {topBarComponent}
+      </div>
       <table className="data-grid-table">
         <thead>
           {table.getHeaderGroups().map((hg) => (
