@@ -136,7 +136,11 @@ export function useServerPost(
             setValidationErrors(errorData.errors);
           }
 
-          msg = errorData.error || errorData.message || msg;
+          const validationMessages = Object.values(errorData.errors ?? {})
+            .flatMap((messages) => (Array.isArray(messages) ? messages : [messages]))
+            .filter((message): message is string => typeof message === 'string' && message.trim() !== '');
+
+          msg = validationMessages.length > 0 ? validationMessages.join(' ') : errorData.error || errorData.message || msg;
         } catch (_) {
           // ignore json parse error
         }
