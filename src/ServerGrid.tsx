@@ -63,6 +63,7 @@ type ServerGridProps = {
 type FormComponentProps = {
   data: FormDataState;
   setData: Dispatch<SetStateAction<FormDataState>>;
+  errors?: Record<string, string[]>;
 };
 
 type FormDataState = Record<string, unknown>;
@@ -86,6 +87,7 @@ export default function ServerGrid({
   getApiBase,
   showNot,
   rowActions,
+
   labels,
   ...rest // anything else you want to pass to Grid
 }: ServerGridProps): React.JSX.Element {
@@ -115,20 +117,20 @@ export default function ServerGrid({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingRow, setEditingRow] = useState<RowData | null>(null);
   const [formData, setFormData] = useState<FormDataState>({});
+  const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
   const [deleteTarget, setDeleteTarget] = useState<RowData | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const isListMode = viewMode === 'list';
-  // const { showNotification } = showNot();
 
-  // If search query changes, jump back to first page
   useEffect(() => {
     setCurrentPage(1);
   }, [query]);
 
-  // Use hooks for HTTP operations
   const fetchData = useServerGet(path, currentPage, query ?? '', setData, setTotalPages, setLoading, setError, getApiBase);
+
   const performDelete = useServerDelete(path, fetchData, setError, showNot, getApiBase);
-  const handleAddRow = useServerPost(path, fetchData, setIsAdding, transformAddPayload, showNot, getApiBase);
+
+  const handleAddRow = useServerPost(path, fetchData, setIsAdding, setValidationErrors, transformAddPayload, showNot, getApiBase);
 
   useEffect(() => {
     if (!isListMode) {
@@ -146,8 +148,9 @@ export default function ServerGrid({
       console.error('Row has no ID');
       return;
     }
-    // Set form data to row's data and open edit dialog
+
     setFormData({ ...row });
+    setValidationErrors({});
     setEditingRow(row);
     setIsEditing(true);
   };
@@ -156,6 +159,7 @@ export default function ServerGrid({
     setIsEditing(false);
     setEditingRow(null);
     setFormData({});
+    setValidationErrors({});
   };
 
   const handleSaveEdit = async () => {
@@ -166,12 +170,12 @@ export default function ServerGrid({
 
     try {
       let updateUrl = `${path.split('?')[0]}/${editingRow.id}`;
+
       if (!updateUrl.startsWith('/api/')) {
         const cleanPath = updateUrl.startsWith('/') ? updateUrl.slice(1) : updateUrl;
         updateUrl = `/api/${cleanPath}`;
       }
 
-      // Clone formData and drop non-updatable technical fields
       const payload: Record<string, unknown> = { ...formData };
 
       // Remove technical/metadata fields (but NOT confirmPassword yet - transformEditPayload needs it for validation)
@@ -196,14 +200,23 @@ export default function ServerGrid({
         let msg = text.updateFailed;
         try {
           const errorData = await res.json();
-          msg = errorData.error || errorData.message || msg;
+
+          if (errorData.errors) {
+            setValidationErrors(errorData.errors);
+          }
+
+          const validationMessages = Object.values(errorData.errors ?? {})
+            .flatMap((messages) => (Array.isArray(messages) ? messages : [messages]))
+            .filter((message): message is string => typeof message === 'string' && message.trim() !== '');
+
+          msg = validationMessages.length > 0 ? validationMessages.join(' ') : errorData.error || errorData.message || msg;
         } catch (_) {
           // ignore json parse error
         }
+
         throw new Error(msg);
       }
 
-      // Refresh from server so grid matches DB
       await fetchData();
       handleCloseEditModal();
       showNot(text.itemUpdated, 'success');
@@ -215,21 +228,27 @@ export default function ServerGrid({
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const handleAdd = () => {
     setFormData({});
+    setValidationErrors({});
     setIsAdding(true);
   };
 
   const handleCloseAddModal = () => {
     setIsAdding(false);
     setFormData({});
+    setValidationErrors({});
   };
 
   return (
@@ -237,7 +256,6 @@ export default function ServerGrid({
       {loading && <div className="grid-loading-overlay">{text.loading}</div>}
       {error && <div className="grid-error-message">{error}</div>}
 
-      {/* Add Button */}
       {showAddButton && (
         <div
           style={{
@@ -288,7 +306,9 @@ export default function ServerGrid({
           }}
           onConfirm={async () => {
             if (isDeleting || !deleteTarget) return;
+
             setIsDeleting(true);
+
             try {
               await performDelete(deleteTarget);
               setDeleteTarget(null);
@@ -305,7 +325,7 @@ export default function ServerGrid({
           isEditing={false}
           onCancel={handleCloseAddModal}
           onSave={() => handleAddRow(formData)}
-          formComponent={<FormComponent data={formData} setData={setFormData} />}
+          formComponent={<FormComponent data={formData} setData={setFormData} errors={validationErrors} />}
           labels={{
             ...(labels.dialog ?? {}),
             title: text.addTitle,
@@ -318,14 +338,14 @@ export default function ServerGrid({
           isEditing={true}
           onCancel={handleCloseEditModal}
           onSave={handleSaveEdit}
-          formComponent={<FormComponent data={formData} setData={setFormData} />}
+          formComponent={<FormComponent data={formData} setData={setFormData} errors={validationErrors} />}
           labels={{
             ...(labels.dialog ?? {}),
             title: text.editTitle,
           }}
         />
       )}
-      {/* Pagination Controls */}
+
       {!isListMode && totalPages > 1 && (
         <div
           style={{
@@ -347,9 +367,11 @@ export default function ServerGrid({
           >
             {labels.grid?.previous ?? 'Previous'}
           </button>
+
           <span>
             {labels.grid?.page ?? 'Page'} {currentPage} {labels.grid?.of ?? 'of'} {totalPages}
           </span>
+
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}

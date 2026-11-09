@@ -79,7 +79,7 @@ export default function Grid({
   allowEditing = false,
   allowDelete = false,
   pageSize = 20,
-  height = '100%',
+  height = '500px',
   onEditRow,
   onDeleteRow,
   onRowClick,
