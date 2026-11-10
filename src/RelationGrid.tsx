@@ -1,7 +1,7 @@
-import { Plus } from 'lucide-react';
 import React, { useState } from 'react';
 import { ServerGrid as ServerGridBase } from 'tai-grid';
 import 'tai-grid/style.css';
+import PlusButton from './PlusButton';
 
 import RelatonDialog from './RelationDialog';
 
@@ -69,9 +69,7 @@ export default function RelationGrid({
           marginBottom: '1rem',
         }}
       >
-        <button type="button" className="server-grid-add-button" title={addTitle} aria-label={addTitle} onClick={() => setShowAddModal(true)}>
-          <Plus size={20} />
-        </button>
+        <PlusButton title={addTitle} onClick={() => setShowAddModal(true)} />
       </div>
 
       {loading ? (

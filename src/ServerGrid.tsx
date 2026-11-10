@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react';
 import React, { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { useServerDelete, useServerGet, useServerPost } from './api/api.js';
 import { getCsrfToken } from './api/csrf.js';
@@ -6,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog.js';
 import DataSetView from './DataSetView.js';
 import type { GridLabels, RowAction } from './Grid.js';
 import Grid from './Grid.js';
+import PlusButton from './PlusButton.js';
 import type { DialogLabels } from './ServerGridEditDialog.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import './styles/Admin.css';
@@ -246,9 +246,7 @@ export default function ServerGrid({
             marginBottom: '1rem',
           }}
         >
-          <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
-            <Plus size={20} />
-          </button>
+          <PlusButton title={text.add} onClick={handleAdd} />
         </div>
       )}
 
