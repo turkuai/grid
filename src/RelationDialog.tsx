@@ -149,16 +149,14 @@ export default function RelationDialog({
     const checked = selectedToAdd.includes(data.id);
 
     return (
-      <div className={`user-autocomplete-option${checked ? ' selected' : ''}`} onClick={() => toggleId(data.id)}>
+      <div className={`record-item${checked ? ' selected' : ''}`} onClick={() => toggleId(data.id)}>
         {renderRecord ? (
           renderRecord(data, checked)
         ) : (
           <>
-            <input type="checkbox" className="user-list-checkbox" checked={checked} readOnly tabIndex={-1} />
+            <input type="checkbox" className="record-checkbox" checked={checked} readOnly tabIndex={-1} />
 
-            <span className="user-autocomplete-name">
-              {data.name || [data.first_name, data.last_name].filter(Boolean).join(' ') || `#${data.id}`}
-            </span>
+            <span className="record-name">{data.name || [data.first_name, data.last_name].filter(Boolean).join(' ') || `#${data.id}`}</span>
           </>
         )}
       </div>
@@ -167,7 +165,7 @@ export default function RelationDialog({
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content group-users-modal" onClick={(event) => event.stopPropagation()}>
+      <div className="modal-content relation-modal-content" onClick={(event) => event.stopPropagation()}>
         {/* Header */}
         <div className="modal-header">
           <h2>{title}</h2>
@@ -197,12 +195,12 @@ export default function RelationDialog({
           <h3>{heading}</h3>
 
           {/* Search */}
-          <div className="user-autocomplete-input-wrap" style={{ marginBottom: '0.75rem' }}>
-            <Search size={16} className="user-autocomplete-icon" />
+          <div className="record-autocomplete-input-wrap" style={{ marginBottom: '0.75rem' }}>
+            <Search size={16} className="record-autocomplete-icon" />
 
             <input
               type="search"
-              className="user-autocomplete-input"
+              className="record-autocomplete-input"
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(event) => {
@@ -215,7 +213,7 @@ export default function RelationDialog({
 
           {/* Available records */}
           <div
-            className="user-autocomplete-list"
+            className="record-autocomplete-list"
             style={{
               height: '300px',
               padding: 0,
