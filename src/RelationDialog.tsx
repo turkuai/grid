@@ -17,7 +17,7 @@ type RelationDialogProps = {
   getApiBase: () => string;
 
   onClose: () => void;
-  onUserAdded?: () => void;
+  onAdded?: () => void;
 
   renderRecord?: (data: Record<string, any>, selected: boolean) => React.ReactNode;
 };
@@ -33,7 +33,7 @@ export default function RelationDialog({
   entityLabelPlural,
   onClose,
   getApiBase,
-  onUserAdded,
+  onAdded,
   renderRecord,
 }: RelationDialogProps) {
   const [selectedToAdd, setSelectedToAdd] = useState<(number | string)[]>([]);
@@ -135,7 +135,7 @@ export default function RelationDialog({
         }
       }
 
-      onUserAdded?.();
+      onAdded?.();
       onClose();
     } catch (error: any) {
       setFetchError(error.message || `Failed to add ${entityLabelPlural.toLowerCase()}.`);
