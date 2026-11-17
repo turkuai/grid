@@ -42,7 +42,7 @@ export default function RelationDialog({
   const [isAdding, setIsAdding] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const apiUrl = (path: string) => `${getApiBase()}/api/${path.replace(/^\/+/, '')}`;
+  const apiUrl = (path: string) => `${getApiBase()}/${path.replace(/^\/+/, '')}`;
   // Extract records from API response.
   const getRows = (response: any): any[] => {
     if (Array.isArray(response?.data?.data)) {
