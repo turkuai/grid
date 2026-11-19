@@ -117,16 +117,18 @@ export default function ServerGrid({
   const [formData, setFormData] = useState<FormDataState>({});
   const [deleteTarget, setDeleteTarget] = useState<RowData | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [search, setSearch] = useState(query ?? '');
   const isListMode = viewMode === 'list';
   // const { showNotification } = showNot();
 
   // If search query changes, jump back to first page
   useEffect(() => {
+    setSearch(query ?? '');
     setCurrentPage(1);
   }, [query]);
 
   // Use hooks for HTTP operations
-  const fetchData = useServerGet(path, currentPage, query ?? '', setData, setTotalPages, setLoading, setError, getApiBase);
+  const fetchData = useServerGet(path, currentPage, search, setData, setTotalPages, setLoading, setError, getApiBase);
   const performDelete = useServerDelete(path, fetchData, setError, showNot, getApiBase);
   const handleAddRow = useServerPost(path, fetchData, setIsAdding, transformAddPayload, showNot, getApiBase);
 
@@ -237,21 +239,6 @@ export default function ServerGrid({
       {loading && <div className="grid-loading-overlay">{text.loading}</div>}
       {error && <div className="grid-error-message">{error}</div>}
 
-      {/* Add Button */}
-      {showAddButton && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '1rem',
-          }}
-        >
-          <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
-            <Plus size={20} />
-          </button>
-        </div>
-      )}
-
       {isListMode ? (
         renderItem && loadPage ? (
           <DataSetView render={renderItem} loadPage={loadPage} />
@@ -268,6 +255,14 @@ export default function ServerGrid({
           pageSize={pageSize}
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
+          onSearch={setSearch}
+          topBarComponent={
+            showAddButton ? (
+              <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
+                <Plus size={20} />
+              </button>
+            ) : undefined
+          }
           {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...(rowActions ? { rowActions } : {})}

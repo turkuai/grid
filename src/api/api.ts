@@ -32,7 +32,7 @@ export function useServerGet(
       // Optional server-side search
       const trimmedQuery = query.trim();
       if (trimmedQuery !== '') {
-        fullUrl = `${fullUrl}&search=${encodeURIComponent(trimmedQuery)}`;
+        fullUrl = `${fullUrl}&q=${encodeURIComponent(trimmedQuery)}`;
       }
 
       const res = await fetch(getApiBase() + fullUrl, {
