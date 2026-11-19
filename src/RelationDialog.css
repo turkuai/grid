@@ -90,6 +90,7 @@
   margin-bottom: 0.5rem;
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
   gap: 0.75rem;
   cursor: pointer;
@@ -410,4 +411,21 @@
 .confirm-btn:disabled {
   background-color: #9ca3af;
   cursor: not-allowed;
+}
+.relation-modal-content .record-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+}
+
+.relation-modal-content .record-checkbox {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.relation-modal-content .record-name {
+  margin: 0;
+  padding: 0;
 }
