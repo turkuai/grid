@@ -1,7 +1,10 @@
 import { Search, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { getCsrfToken } from './api/csrf.js';
 import DataSetView from './DataSetView';
 import './RelationDialog.css';
+
+type RowData = Record<string, any>;
 
 type RelationDialogProps = {
   title: string;
@@ -14,12 +17,15 @@ type RelationDialogProps = {
 
   entityLabel: string;
   entityLabelPlural: string;
+
   getApiBase: () => string;
+
+  getRecordId: (data: RowData) => number | string;
+  getRecords: (response: any) => RowData[];
+  renderRecord: (data: RowData, selected: boolean) => React.ReactNode;
 
   onClose: () => void;
   onAdded?: () => void;
-
-  renderRecord?: (data: Record<string, any>, selected: boolean) => React.ReactNode;
 };
 
 export default function RelationDialog({
@@ -31,42 +37,30 @@ export default function RelationDialog({
   addUrl,
   entityLabel,
   entityLabelPlural,
-  onClose,
   getApiBase,
-  onAdded,
+  getRecordId,
+  getRecords,
   renderRecord,
+  onClose,
+  onAdded,
 }: RelationDialogProps) {
   const [selectedToAdd, setSelectedToAdd] = useState<(number | string)[]>([]);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const apiUrl = (path: string) => `${getApiBase()}/${path.replace(/^\/+/, '')}`;
-  // Extract records from API response.
-  const getRows = (response: any): any[] => {
-    if (Array.isArray(response?.data?.data)) {
-      return response.data.data;
-    }
+  // Build API URL using the same convention as ServerGrid
+  const apiUrl = (path: string) => {
+    const base = getApiBase().replace(/\/+$/, '');
+    const cleanPath = path.replace(/^\/+/, '');
 
-    if (Array.isArray(response?.data)) {
-      return response.data;
-    }
+    const apiPath = cleanPath.startsWith('api/') ? `/${cleanPath}` : `/api/${cleanPath}`;
 
-    if (Array.isArray(response?.users)) {
-      return response.users;
-    }
-
-    if (Array.isArray(response?.patients)) {
-      return response.patients;
-    }
-
-    return [];
+    return `${base}${apiPath}`;
   };
 
-  // Fetch available (unregistered) records.
   const loadPage = useCallback(
-    async (page: number) => {
+    async (page: number): Promise<RowData[]> => {
       setFetchError(null);
 
       try {
@@ -78,9 +72,11 @@ export default function RelationDialog({
           params.set('search', searchQuery.trim());
         }
 
-        const separator = fetchUrl.includes('?') ? '&' : '?';
+        const url = apiUrl(fetchUrl);
+        const separator = url.includes('?') ? '&' : '?';
 
-        const response = await fetch(`${apiUrl(fetchUrl)}?${params.toString()}`, {
+        const response = await fetch(`${url}${separator}${params.toString()}`, {
+          method: 'GET',
           credentials: 'include',
           headers: {
             Accept: 'application/json',
@@ -91,28 +87,24 @@ export default function RelationDialog({
           throw new Error(`Failed to load ${entityLabelPlural.toLowerCase()}.`);
         }
 
-        const data = await response.json();
+        const responseData = await response.json();
 
-        return getRows(data);
-      } catch (error: any) {
-        setFetchError(error.message || 'Network error');
+        return getRecords(responseData);
+      } catch (error: unknown) {
+        setFetchError(error instanceof Error ? error.message : 'Network error');
+
         return [];
       }
     },
-    [fetchUrl, searchQuery, entityLabelPlural],
+    [fetchUrl, searchQuery, entityLabelPlural, getApiBase, getRecords],
   );
 
-  // Select or unselect records locally.
-  // No API request happens here.
   const toggleId = (id: number | string) => {
     setSelectedToAdd((previous) => (previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id]));
   };
 
-  // Save selected records only when Add is clicked.
   const handleAddRecords = async () => {
-    if (!selectedToAdd.length || isAdding) {
-      return;
-    }
+    if (!selectedToAdd.length || isAdding) return;
 
     setIsAdding(true);
     setFetchError(null);
@@ -125,6 +117,7 @@ export default function RelationDialog({
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': getCsrfToken(),
           },
         });
 
@@ -137,28 +130,22 @@ export default function RelationDialog({
 
       onAdded?.();
       onClose();
-    } catch (error: any) {
-      setFetchError(error.message || `Failed to add ${entityLabelPlural.toLowerCase()}.`);
+    } catch (error: unknown) {
+      setFetchError(error instanceof Error ? error.message : `Failed to add ${entityLabelPlural.toLowerCase()}.`);
     } finally {
       setIsAdding(false);
     }
   };
 
-  // Record rendering.
-  const RecordOption = ({ data }: { data: Record<string, any> }) => {
-    const checked = selectedToAdd.includes(data.id);
+  const RecordOption = ({ data }: { data: RowData }) => {
+    const id = getRecordId(data);
+    const checked = selectedToAdd.includes(id);
 
     return (
-      <div className={`record-item${checked ? ' selected' : ''}`} onClick={() => toggleId(data.id)}>
-        {renderRecord ? (
-          renderRecord(data, checked)
-        ) : (
-          <>
-            <input type="checkbox" className="record-checkbox" checked={checked} readOnly tabIndex={-1} />
+      <div className={`record-item${checked ? ' selected' : ''}`} onClick={() => toggleId(id)}>
+        <input type="checkbox" className="record-checkbox" checked={checked} readOnly tabIndex={-1} />
 
-            <span className="record-name">{data.name || [data.first_name, data.last_name].filter(Boolean).join(' ') || `#${data.id}`}</span>
-          </>
-        )}
+        {renderRecord(data, checked)}
       </div>
     );
   };
@@ -166,7 +153,6 @@ export default function RelationDialog({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content relation-modal-content" onClick={(event) => event.stopPropagation()}>
-        {/* Header */}
         <div className="modal-header">
           <h2>{title}</h2>
 
@@ -175,7 +161,6 @@ export default function RelationDialog({
           </button>
         </div>
 
-        {/* Error */}
         {fetchError && (
           <div
             style={{
@@ -191,10 +176,8 @@ export default function RelationDialog({
         )}
 
         <div className="modal-body">
-          {/* Heading */}
           <h3>{heading}</h3>
 
-          {/* Search */}
           <div className="record-autocomplete-input-wrap" style={{ marginBottom: '0.75rem' }}>
             <Search size={16} className="record-autocomplete-icon" />
 
@@ -211,18 +194,10 @@ export default function RelationDialog({
             />
           </div>
 
-          {/* Available records */}
-          <div
-            className="record-autocomplete-list"
-            style={{
-              height: '300px',
-              padding: 0,
-            }}
-          >
+          <div className="record-autocomplete-list" style={{ height: '300px', padding: 0 }}>
             <DataSetView key={`${fetchUrl}-${searchQuery}`} render={RecordOption} loadPage={loadPage} />
           </div>
 
-          {/* Footer */}
           <div className="modal-footer">
             <button className="cancel-btn" type="button" onClick={onClose}>
               {cancelLabel}
