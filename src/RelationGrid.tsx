@@ -2,21 +2,29 @@ import React, { useState } from 'react';
 import { ServerGrid as ServerGridBase } from 'tai-grid';
 import 'tai-grid/style.css';
 import PlusButton from './PlusButton';
-
-import RelatonDialog from './RelationDialog';
+import RelationDialog from './RelationDialog';
 
 const ServerGrid = ServerGridBase as React.ComponentType<any>;
+
+type RowData = Record<string, any>;
 
 type AddModalConfig = {
   title: string;
   heading: string;
   searchPlaceholder: string;
   cancelLabel: string;
+
   fetchUrl: string;
   addUrl: (id: number | string) => string;
+
   entityLabel: string;
   entityLabelPlural: string;
-  onUserAdded?: () => void;
+
+  getRecordId: (data: RowData) => number | string;
+  getRecords: (response: any) => RowData[];
+  renderRecord: (data: RowData, selected: boolean) => React.ReactNode;
+
+  onAdded?: () => void;
 };
 
 type RelationGridProps = {
@@ -50,14 +58,13 @@ export default function RelationGrid({
   getApiBase,
   showNot,
   labels,
-  emptyMessage,
 }: RelationGridProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [localRefreshKey, setLocalRefreshKey] = useState(0);
 
   const handleRecordsAdded = () => {
     setLocalRefreshKey((previous) => previous + 1);
-    addModal.onUserAdded?.();
+    addModal.onAdded?.();
   };
 
   return (
@@ -91,7 +98,7 @@ export default function RelationGrid({
       )}
 
       {showAddModal && (
-        <RelatonDialog
+        <RelationDialog
           title={addModal.title}
           heading={addModal.heading}
           searchPlaceholder={addModal.searchPlaceholder}
@@ -101,8 +108,11 @@ export default function RelationGrid({
           entityLabel={addModal.entityLabel}
           entityLabelPlural={addModal.entityLabelPlural}
           getApiBase={getApiBase}
+          getRecordId={addModal.getRecordId}
+          getRecords={addModal.getRecords}
+          renderRecord={addModal.renderRecord}
           onClose={() => setShowAddModal(false)}
-          onUserAdded={handleRecordsAdded}
+          onAdded={handleRecordsAdded}
         />
       )}
     </div>
