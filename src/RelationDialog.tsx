@@ -6,7 +6,7 @@ import './RelationDialog.css';
 
 type RowData = Record<string, any>;
 
-type RelationDialogProps = {
+export type RelationDialogProps = {
   title: string;
   heading: string;
   searchPlaceholder: string;
