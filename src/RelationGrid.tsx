@@ -2,36 +2,16 @@ import React, { useState } from 'react';
 import { ServerGrid as ServerGridBase } from 'tai-grid';
 import 'tai-grid/style.css';
 import PlusButton from './PlusButton';
-import RelationDialog from './RelationDialog';
-
+import RelationDialog, { RelationDialogProps } from './RelationDialog';
 const ServerGrid = ServerGridBase as React.ComponentType<any>;
 
 type RowData = Record<string, any>;
-
-type AddModalConfig = {
-  title: string;
-  heading: string;
-  searchPlaceholder: string;
-  cancelLabel: string;
-
-  fetchUrl: string;
-  addUrl: (id: number | string) => string;
-
-  entityLabel: string;
-  entityLabelPlural: string;
-
-  getRecordId: (data: RowData) => number | string;
-  getRecords: (response: any) => RowData[];
-  renderRecord: (data: RowData, selected: boolean) => React.ReactNode;
-
-  onAdded?: () => void;
-};
 
 type RelationGridProps = {
   columns: any[];
   path: string;
   addTitle: string;
-  addModal: AddModalConfig;
+  addModal: RelationDialogProps;
 
   loading?: boolean;
   refreshKey?: string | number;
