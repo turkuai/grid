@@ -5,13 +5,11 @@ import PlusButton from './PlusButton';
 import RelationDialog, { RelationDialogProps } from './RelationDialog';
 const ServerGrid = ServerGridBase as React.ComponentType<any>;
 
-type RowData = Record<string, any>;
-
 type RelationGridProps = {
   columns: any[];
   path: string;
   addTitle: string;
-  addModal: RelationDialogProps;
+  dialogConfig: RelationDialogProps;
 
   loading?: boolean;
   refreshKey?: string | number;
@@ -29,7 +27,7 @@ export default function RelationGrid({
   columns,
   path,
   addTitle,
-  addModal,
+  dialogConfig,
   loading = false,
   refreshKey = 0,
   allowDelete = false,
@@ -44,7 +42,7 @@ export default function RelationGrid({
 
   const handleRecordsAdded = () => {
     setLocalRefreshKey((previous) => previous + 1);
-    addModal.onAdded?.();
+    dialogConfig.onAdded?.();
   };
 
   return (
@@ -79,18 +77,18 @@ export default function RelationGrid({
 
       {showAddModal && (
         <RelationDialog
-          title={addModal.title}
-          heading={addModal.heading}
-          searchPlaceholder={addModal.searchPlaceholder}
-          cancelLabel={addModal.cancelLabel}
-          fetchUrl={addModal.fetchUrl}
-          addUrl={addModal.addUrl}
-          entityLabel={addModal.entityLabel}
-          entityLabelPlural={addModal.entityLabelPlural}
+          title={dialogConfig.title}
+          heading={dialogConfig.heading}
+          searchPlaceholder={dialogConfig.searchPlaceholder}
+          cancelLabel={dialogConfig.cancelLabel}
+          fetchUrl={dialogConfig.fetchUrl}
+          addUrl={dialogConfig.addUrl}
+          entityLabel={dialogConfig.entityLabel}
+          entityLabelPlural={dialogConfig.entityLabelPlural}
           getApiBase={getApiBase}
-          getRecordId={addModal.getRecordId}
-          getRecords={addModal.getRecords}
-          renderRecord={addModal.renderRecord}
+          getRecordId={dialogConfig.getRecordId}
+          getRecords={dialogConfig.getRecords}
+          renderRecord={dialogConfig.renderRecord}
           onClose={() => setShowAddModal(false)}
           onAdded={handleRecordsAdded}
         />
