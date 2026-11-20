@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { ServerGrid as ServerGridBase } from 'tai-grid';
 import 'tai-grid/style.css';
 import PlusButton from './PlusButton';
-import RelationDialog, { RelationDialogProps } from './RelationDialog';
+import type { RelationDialogProps } from './RelationDialog';
+import RelationDialog from './RelationDialog';
+
 const ServerGrid = ServerGridBase as React.ComponentType<any>;
 
 type RelationGridProps = {
   columns: any[];
   path: string;
   addTitle: string;
-  dialogConfig: RelationDialogProps;
+  dialogConfig: Omit<RelationDialogProps, 'getApiBase' | 'onClose'>;
 
   loading?: boolean;
   refreshKey?: string | number;
@@ -76,22 +78,7 @@ export default function RelationGrid({
       )}
 
       {showAddModal && (
-        <RelationDialog
-          title={dialogConfig.title}
-          heading={dialogConfig.heading}
-          searchPlaceholder={dialogConfig.searchPlaceholder}
-          cancelLabel={dialogConfig.cancelLabel}
-          fetchUrl={dialogConfig.fetchUrl}
-          addUrl={dialogConfig.addUrl}
-          entityLabel={dialogConfig.entityLabel}
-          entityLabelPlural={dialogConfig.entityLabelPlural}
-          getApiBase={getApiBase}
-          getRecordId={dialogConfig.getRecordId}
-          getRecords={dialogConfig.getRecords}
-          renderRecord={dialogConfig.renderRecord}
-          onClose={() => setShowAddModal(false)}
-          onAdded={handleRecordsAdded}
-        />
+        <RelationDialog {...dialogConfig} getApiBase={getApiBase} onClose={() => setShowAddModal(false)} onAdded={handleRecordsAdded} />
       )}
     </div>
   );
