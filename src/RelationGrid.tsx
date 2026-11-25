@@ -9,10 +9,10 @@ const ServerGrid = ServerGridBase as React.ComponentType<any>;
 
 type RelationGridProps = {
   columns: any[];
+  columnRenderers?: Record<string, React.ComponentType<{ value: unknown; data: unknown }>>;
   path: string;
   addTitle: string;
   dialogConfig: Omit<RelationDialogProps, 'getApiBase' | 'onClose'>;
-
   loading?: boolean;
   refreshKey?: string | number;
   allowDelete?: boolean;
@@ -27,6 +27,7 @@ type RelationGridProps = {
 
 export default function RelationGrid({
   columns,
+  columnRenderers,
   path,
   addTitle,
   dialogConfig,
@@ -65,6 +66,7 @@ export default function RelationGrid({
         <ServerGrid
           key={`${refreshKey}-${localRefreshKey}`}
           columns={columns}
+          columnRenderers={columnRenderers}
           path={path}
           allowEditing={false}
           allowDelete={allowDelete}

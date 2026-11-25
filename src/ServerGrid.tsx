@@ -238,20 +238,6 @@ export default function ServerGrid({
     <div style={{ position: 'relative' }}>
       {loading && <div className="grid-loading-overlay">{text.loading}</div>}
       {error && <div className="grid-error-message">{error}</div>}
-
-      {/* Add Button */}
-      {showAddButton && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '1rem',
-          }}
-        >
-          <PlusButton title={text.add} onClick={handleAdd} />
-        </div>
-      )}
-
       {isListMode ? (
         renderItem && loadPage ? (
           <DataSetView render={renderItem} loadPage={loadPage} />
