@@ -269,13 +269,7 @@ export default function ServerGrid({
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
           onSearch={setSearch}
-          topBarComponent={
-            showAddButton ? (
-              <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
-                <Plus size={20} />
-              </button>
-            ) : undefined
-          }
+          topBarComponent={showAddButton ? <PlusButton title={text.add} onClick={handleAdd} /> : undefined}
           {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...(rowActions ? { rowActions } : {})}
