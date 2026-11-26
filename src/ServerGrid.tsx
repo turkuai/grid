@@ -60,7 +60,7 @@ type ServerGridProps = {
   labels: ServerGridLabels;
 };
 
-type FormComponentProps = {
+export type FormComponentProps = {
   data: FormDataState;
   setData: Dispatch<SetStateAction<FormDataState>>;
   errors?: Record<string, string[]>;

@@ -6,5 +6,5 @@ export { default as Grid, type RowAction } from './Grid.js';
 export { default as PlusButton } from './PlusButton.js';
 export { default as RelationDialog } from './RelationDialog.js';
 export { default as RelationGrid } from './RelationGrid.js';
-export { default as ServerGrid } from './ServerGrid.js';
+export { default as ServerGrid, type FormComponentProps } from './ServerGrid.js';
 export { default as ServerGridEditDialog } from './ServerGridEditDialog.js';
