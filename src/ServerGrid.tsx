@@ -1,4 +1,3 @@
-import { Plus } from 'lucide-react';
 import React, { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react';
 import { useServerDelete, useServerGet, useServerPost } from './api/api.js';
 import { getCsrfToken } from './api/csrf.js';
@@ -6,6 +5,7 @@ import ConfirmDialog from './ConfirmDialog.js';
 import DataSetView from './DataSetView.js';
 import type { GridLabels, RowAction } from './Grid.js';
 import Grid from './Grid.js';
+import PlusButton from './PlusButton.js';
 import type { DialogLabels } from './ServerGridEditDialog.js';
 import ServerGridEditDialog from './ServerGridEditDialog.js';
 import './styles/Admin.css';
@@ -120,14 +120,16 @@ export default function ServerGrid({
   const [validationErrors, setValidationErrors] = useState<Record<string, string[]>>({});
   const [deleteTarget, setDeleteTarget] = useState<RowData | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [search, setSearch] = useState(query ?? '');
   const isListMode = viewMode === 'list';
 
   useEffect(() => {
+    setSearch(query ?? '');
     setCurrentPage(1);
   }, [query]);
 
-  const fetchData = useServerGet(path, currentPage, query ?? '', setData, setTotalPages, setLoading, setError, getApiBase);
-
+  // Use hooks for HTTP operations
+  const fetchData = useServerGet(path, currentPage, search, setData, setTotalPages, setLoading, setError, getApiBase);
   const performDelete = useServerDelete(path, fetchData, setError, showNot, getApiBase);
 
   const handleAddRow = useServerPost(path, fetchData, setIsAdding, setValidationErrors, transformAddPayload, showNot, getApiBase);
@@ -255,21 +257,6 @@ export default function ServerGrid({
     <div style={{ position: 'relative' }}>
       {loading && <div className="grid-loading-overlay">{text.loading}</div>}
       {error && <div className="grid-error-message">{error}</div>}
-
-      {showAddButton && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '1rem',
-          }}
-        >
-          <button onClick={handleAdd} className="server-grid-add-button" type="button" aria-label={text.add} title={text.add}>
-            <Plus size={20} />
-          </button>
-        </div>
-      )}
-
       {isListMode ? (
         renderItem && loadPage ? (
           <DataSetView render={renderItem} loadPage={loadPage} />
@@ -286,6 +273,8 @@ export default function ServerGrid({
           pageSize={pageSize}
           onEditRow={handleEditRequest}
           onDeleteRow={handleDeleteRequest}
+          onSearch={setSearch}
+          topBarComponent={showAddButton ? <PlusButton title={text.add} onClick={handleAdd} /> : undefined}
           {...(labels.grid !== undefined ? { labels: labels.grid } : {})}
           {...(rowActions ? { rowActions } : {})}
           {...(rowActions ? { rowActions } : {})}
