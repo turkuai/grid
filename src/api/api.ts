@@ -92,6 +92,7 @@ export function useServerPost(
   path: string,
   fetchData: () => Promise<void>,
   setIsAdding: React.Dispatch<React.SetStateAction<boolean>>,
+  setValidationErrors: React.Dispatch<React.SetStateAction<Record<string, string[]>>>,
   transformAddPayload: ((payload: Record<string, unknown>, context: { path: string }) => Record<string, unknown>) | undefined,
   onNotify: (message: string, type: 'success' | 'error') => void,
   getApiBase: () => string,
@@ -101,14 +102,14 @@ export function useServerPost(
 
     try {
       let addUrl = path.includes('?') ? path.slice(0, path.indexOf('?')) : path;
-      // Ensure /api/ prefix if not present
+
       if (!addUrl.startsWith('/api/')) {
         const cleanPath = addUrl.startsWith('/') ? addUrl.slice(1) : addUrl;
         addUrl = `/api/${cleanPath}`;
       }
 
-      // Prepare payload - exclude technical fields
       let payload = { ...newRowData };
+
       delete payload.id;
       delete payload.created_at;
       delete payload.updated_at;
@@ -127,16 +128,26 @@ export function useServerPost(
 
       if (!res.ok) {
         let msg = 'Failed to add item';
+
         try {
           const errorData = await res.json();
-          msg = errorData.error || errorData.message || msg;
+
+          if (errorData.errors) {
+            setValidationErrors(errorData.errors);
+          }
+
+          const validationMessages = Object.values(errorData.errors ?? {})
+            .flatMap((messages) => (Array.isArray(messages) ? messages : [messages]))
+            .filter((message): message is string => typeof message === 'string' && message.trim() !== '');
+
+          msg = validationMessages.length > 0 ? validationMessages.join(' ') : errorData.error || errorData.message || msg;
         } catch (_) {
           // ignore json parse error
         }
+
         throw new Error(msg);
       }
 
-      // Refresh data after successful addition
       await fetchData();
       setIsAdding(false);
       onNotify('Item added successfully!', 'success');
